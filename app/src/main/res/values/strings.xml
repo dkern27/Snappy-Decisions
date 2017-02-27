@@ -1,3 +1,5 @@
 <resources>
 	<string name="app_name">Snappy Decisions</string>
+	<string name="title_activity_normal_decision">NormalDecisionActivity</string>
+	<string name="action_settings">Settings</string>
 </resources>
