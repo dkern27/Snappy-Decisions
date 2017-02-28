@@ -1,5 +1,7 @@
 <resources>
 	<string name="app_name">Snappy Decisions</string>
-	<string name="title_activity_normal_decision">NormalDecisionActivity</string>
 	<string name="action_settings">Settings</string>
+	<string name="random_decision">Random Decision</string>
+	<string name="food_near_me">Food Near Me</string>
+	<string name="product_decision">Product Decision</string>
 </resources>
