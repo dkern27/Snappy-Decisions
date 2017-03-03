@@ -32,8 +32,7 @@
 			android:layout_centerVertical="false"
 			android:layout_centerHorizontal="true"
 			android:layout_below="@+id/LOGO"
-			style="@style/Widget.AppCompat.Button.Colored"
-			android:textColorLink="?android:attr/colorAccent" />
+			style="@style/Widget.AppCompat.Button.Colored" />
 
 		<Button
 			android:text="@string/food_near_me"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/activity_normal_decision"
 	android:layout_width="match_parent"
@@ -9,5 +10,90 @@
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingTop="@dimen/activity_vertical_margin"
 	tools:context="csci448.appigators.snappydecisions.NormalDecisionActivity">
+
+	<EditText
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:inputType="numberDecimal"
+		android:ems="10"
+		android:id="@+id/weight_text"
+		android:layout_alignBottom="@+id/new_decision_text"
+		android:layout_alignParentEnd="true"
+		android:layout_toEndOf="@+id/new_decision_text"
+		android:layout_alignParentTop="true"
+		android:padding="8dp"
+		android:hint="@string/weight_hint"
+		android:textAlignment="center" />
+
+	<EditText
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:inputType="textPersonName"
+		android:ems="10"
+		android:id="@+id/new_decision_text"
+		android:paddingLeft="8dp"
+		android:hint="@string/enter_text_hint"
+		android:layout_alignParentTop="true"
+		android:layout_toEndOf="@+id/add_button"
+		android:layout_alignBottom="@+id/add_button" />
+
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:srcCompat="@android:drawable/ic_input_add"
+		android:id="@+id/add_button"
+		android:backgroundTint="@android:color/transparent"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentStart="true" />
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/weight_text">
+
+		<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:id="@+id/decision_list_view"
+			android:layout_below="@+id/weight_text"
+			android:layout_alignParentStart="true"
+			android:layout_weight="3">
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/decision_list_linear_layout">
+
+			</LinearLayout>
+		</ScrollView>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="2">
+
+			<Button
+				android:text="@string/load"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentEnd="true"
+				android:id="@+id/button3"
+				style="@style/Widget.AppCompat.Button.Colored" />
+
+			<Button
+				android:text="@string/save"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/button2"
+				style="@style/Widget.AppCompat.Button.Colored"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentStart="true"
+				android:layout_marginStart="11dp" />
+
+		</RelativeLayout>
+	</LinearLayout>
 
 </RelativeLayout>

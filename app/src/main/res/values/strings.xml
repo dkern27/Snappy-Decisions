@@ -4,4 +4,8 @@
 	<string name="random_decision">Random Decision</string>
 	<string name="food_near_me">Food Near Me</string>
 	<string name="product_decision">Product Decision</string>
+	<string name="save">Save</string>
+	<string name="load">load</string>
+	<string name="enter_text_hint">Enter Text...</string>
+	<string name="weight_hint">0-100</string>
 </resources>
