@@ -11,4 +11,5 @@
 	<string name="make_decision_button">Make Decision</string>
 	<string name="distance">Distance: %d miles</string>
 	<string name="filters">Filters</string>
+	<string name="asian_filter">Asian</string>
 </resources>

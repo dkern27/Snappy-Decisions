@@ -22,6 +22,9 @@
 			android:parentActivityName=".StartActivity">
 		</activity>
 		<activity android:name=".ProductDecisionActivity"
+			android:parentActivityName=".StartActivity">
+		</activity>
+		<activity android:name=".FoodFiltersActivity"
 			android:parentActivityName=".FoodDecisionActivity">
 		</activity>
 		<meta-data

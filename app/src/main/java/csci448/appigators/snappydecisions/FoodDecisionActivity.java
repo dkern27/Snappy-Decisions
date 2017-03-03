@@ -44,7 +44,8 @@ public class FoodDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(FoodDecisionActivity.this, "Opening Filters Popup", Toast.LENGTH_SHORT).show();
+                Intent i = FoodFiltersActivity.newIntent(FoodDecisionActivity.this);
+                startActivity(i);
             }
         });
 
