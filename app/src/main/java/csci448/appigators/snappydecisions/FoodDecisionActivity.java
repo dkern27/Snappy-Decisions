@@ -36,7 +36,7 @@ public class FoodDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -53,7 +53,7 @@ public class FoodDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(FoodDecisionActivity.this, "Decision saved (not)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FoodDecisionActivity.this, "Would open dialogue to save current settings", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -61,7 +61,7 @@ public class FoodDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(FoodDecisionActivity.this, "Decision was NOT loaded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FoodDecisionActivity.this, "Would open dialogue to load a saved distance/filter combo", Toast.LENGTH_SHORT).show();
             }
         });
 
