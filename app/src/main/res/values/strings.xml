@@ -9,4 +9,6 @@
 	<string name="enter_text_hint">Enter Text...</string>
 	<string name="weight_hint">0-100</string>
 	<string name="make_decision_button">Make Decision</string>
+	<string name="distance">Distance: %d miles</string>
+	<string name="filters">Filters</string>
 </resources>
