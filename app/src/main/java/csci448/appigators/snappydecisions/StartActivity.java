@@ -10,9 +10,9 @@ import io.fabric.sdk.android.Fabric;
 
 public class StartActivity extends AppCompatActivity
 {
-    Button randomDecisionButton;
-    Button foodNearMeButton;
-    Button productDecisionButton;
+    Button mRandomDecisionButton;
+    Button mFoodNearMeButton;
+    Button mProductDecisionButton;
 
 
     /**
@@ -26,11 +26,11 @@ public class StartActivity extends AppCompatActivity
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_start);
 
-        randomDecisionButton = (Button)findViewById(R.id.normal_decision_button);
-        foodNearMeButton = (Button)findViewById(R.id.food_decision_button);
-        productDecisionButton = (Button)findViewById(R.id.product_decision_button);
+        mRandomDecisionButton = (Button)findViewById(R.id.normal_decision_button);
+        mFoodNearMeButton = (Button)findViewById(R.id.food_decision_button);
+        mProductDecisionButton = (Button)findViewById(R.id.product_decision_button);
 
-        randomDecisionButton.setOnClickListener(new View.OnClickListener() {
+        mRandomDecisionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -39,7 +39,7 @@ public class StartActivity extends AppCompatActivity
             }
         });
 
-        foodNearMeButton.setOnClickListener(new View.OnClickListener() {
+        mFoodNearMeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -48,7 +48,7 @@ public class StartActivity extends AppCompatActivity
             }
         });
 
-        productDecisionButton.setOnClickListener(new View.OnClickListener() {
+        mProductDecisionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
