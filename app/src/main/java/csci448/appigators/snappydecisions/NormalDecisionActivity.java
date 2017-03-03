@@ -7,7 +7,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,7 +22,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class NormalDecisionActivity extends AppCompatActivity
+public class NormalDecisionActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener
 {
     ImageButton mAddButton;
     EditText mNewDecisionText;
@@ -35,7 +37,7 @@ public class NormalDecisionActivity extends AppCompatActivity
 
     void showSaveDialogue(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Save Current Settings As");
+        builder.setTitle("Save Current Decisions and Weights As");
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -44,7 +46,7 @@ public class NormalDecisionActivity extends AppCompatActivity
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(NormalDecisionActivity.this, "Current Settings Saved (NOT IN ALPHA)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NormalDecisionActivity.this, "Would save current settings and add as an option in the load popup, but not in alpha", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -93,7 +95,22 @@ public class NormalDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(NormalDecisionActivity.this, "Decision was NOT loaded", Toast.LENGTH_SHORT).show();
+                PopupMenu popupMenu = new PopupMenu(NormalDecisionActivity.this, v);
+                popupMenu.setOnMenuItemClickListener(NormalDecisionActivity.this);
+                popupMenu.getMenu().add("Option1");
+                popupMenu.getMenu().add("Option2");
+                popupMenu.getMenu().add("Option3");
+                popupMenu.getMenu().add("Option4");
+                popupMenu.getMenu().add("Option5");
+                popupMenu.getMenu().add("Option6");
+                popupMenu.getMenu().add("Option7");
+                popupMenu.getMenu().add("Option8");
+                popupMenu.getMenu().add("Option9");
+                popupMenu.getMenu().add("Option10");
+                popupMenu.getMenu().add("Option11");
+                popupMenu.getMenu().add("Option12");
+                popupMenu.inflate(R.menu.popup_menu);
+                popupMenu.show();
             }
         });
 
@@ -106,6 +123,11 @@ public class NormalDecisionActivity extends AppCompatActivity
                 mDecisionText.setText(mOptions.get(choice).getOption());
             }
         });
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        Toast.makeText(NormalDecisionActivity.this, "Would change to saved decisions/weights combo, but not in alpha", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     /**
