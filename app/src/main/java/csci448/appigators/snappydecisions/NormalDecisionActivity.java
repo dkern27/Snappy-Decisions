@@ -2,6 +2,7 @@ package csci448.appigators.snappydecisions;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NormalDecisionActivity extends AppCompatActivity
 {
@@ -68,6 +70,16 @@ public class NormalDecisionActivity extends AppCompatActivity
                 Toast.makeText(NormalDecisionActivity.this, "Decision was NOT loaded", Toast.LENGTH_SHORT).show();
             }
         });
+
+        mMakeDecisionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Random rand = new Random();
+                int choice = rand.nextInt(mOptions.size());
+                mDecisionText.setText(mOptions.get(choice).getOption());
+            }
+        });
     }
 
     /**
@@ -94,20 +106,33 @@ public class NormalDecisionActivity extends AppCompatActivity
             weight = "1";
         }
 
-        LinearLayout ll = new LinearLayout(NormalDecisionActivity.this);
+        final LinearLayout ll = new LinearLayout(NormalDecisionActivity.this);
         ll.setOrientation(LinearLayout.HORIZONTAL);
+
+        ImageButton removeButton = new ImageButton(NormalDecisionActivity.this);
+        removeButton.setImageResource(android.R.drawable.ic_delete);
+        removeButton.setBackgroundColor(Color.TRANSPARENT);
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mDecisionListLinearLayout.removeView(ll);
+                //Needs to remove from mOptions as well
+            }
+        });
+        ll.addView(removeButton);
 
         EditText decision_et = new EditText(NormalDecisionActivity.this);
         decision_et.setText(option);
-        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
-        ll.addView(decision_et, lp1);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
+        ll.addView(decision_et, lp2);
 
         EditText weight_et = new EditText(NormalDecisionActivity.this);
         weight_et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
         weight_et.setText(weight);
         weight_et.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-        ll.addView(weight_et, lp2);
+        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        ll.addView(weight_et, lp3);
 
         mDecisionListLinearLayout.addView(ll);
 
