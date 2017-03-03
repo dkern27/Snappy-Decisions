@@ -6,12 +6,32 @@ package csci448.appigators.snappydecisions;
 
 public class NormalDecisionOption
 {
-    String mOption;
-    double mWeight;
+    private String mOption;
+    private double mWeight;
 
     public NormalDecisionOption(String option, double weight)
     {
         this.mOption = option;
         this.mWeight = weight;
+    }
+
+    public String getOption()
+    {
+        return mOption;
+    }
+
+    public void setOption(String option)
+    {
+        mOption = option;
+    }
+
+    public double getWeight()
+    {
+        return mWeight;
+    }
+
+    public void setWeight(double weight)
+    {
+        mWeight = weight;
     }
 }
