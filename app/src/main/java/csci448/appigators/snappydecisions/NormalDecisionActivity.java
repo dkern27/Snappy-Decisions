@@ -1,9 +1,11 @@
 package csci448.appigators.snappydecisions;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
@@ -30,6 +32,29 @@ public class NormalDecisionActivity extends AppCompatActivity
     TextView mDecisionText;
 
     ArrayList<NormalDecisionOption> mOptions = new ArrayList<>();
+
+    void showSaveDialogue(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Save Current Settings As");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(NormalDecisionActivity.this, "Current Settings Saved (NOT IN ALPHA)", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,7 +84,8 @@ public class NormalDecisionActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(NormalDecisionActivity.this, "Decision saved (not)", Toast.LENGTH_SHORT).show();
+                showSaveDialogue();
+                //Toast.makeText(NormalDecisionActivity.this, "Decision saved (not)", Toast.LENGTH_SHORT).show();
             }
         });
 
