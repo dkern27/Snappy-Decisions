@@ -27,6 +27,9 @@
 		<activity android:name=".FoodFiltersActivity"
 			android:parentActivityName=".FoodDecisionActivity">
 		</activity>
+		<activity android:name=".ProductInfoActivity"
+				  android:parentActivityName=".ProductDecisionActivity">
+		</activity>
 		<meta-data
 			android:name="io.fabric.ApiKey"
 			android:value="13fb58c44348a16b693a6072e11011434413cfa3" />

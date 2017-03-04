@@ -8,7 +8,10 @@
 	<string name="load">load</string>
 	<string name="enter_text_hint">Enter Text...</string>
 	<string name="weight_hint">0-100</string>
+	<string name="enter_product_hint">Enter product name...</string>
 	<string name="make_decision_button">Make Decision</string>
+	<string name="product_rating">Rating:</string>
+	<string name="product_description">Product Description:</string>
 	<string name="distance">Distance: %d miles</string>
 	<string name="filters">Filters</string>
 	<string name="type_string">Type of food:</string>
