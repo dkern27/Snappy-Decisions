@@ -119,8 +119,13 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             public void onClick(View v)
             {
                 Random rand = new Random();
-                int choice = rand.nextInt(mOptions.size());
-                mDecisionText.setText(mOptions.get(choice).getOption());
+                if (mOptions.size() > 0){
+                    int choice = rand.nextInt(mOptions.size());
+                    mDecisionText.setText(mOptions.get(choice).getOption());
+                }else{
+                    Toast.makeText(NormalDecisionActivity.this, "No decisions to choose from!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
