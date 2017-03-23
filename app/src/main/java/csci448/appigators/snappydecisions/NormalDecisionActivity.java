@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +31,7 @@ import static android.view.View.VISIBLE;
 
 public class NormalDecisionActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener
 {
+    RelativeLayout mParentLayout;
     ImageButton mAddButton;
     CheckBox mWeightsCheckbox;
     EditText mNewDecisionText;
@@ -64,6 +65,7 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal_decision);
 
+        mParentLayout = (RelativeLayout)findViewById(R.id.activity_normal_decision);
         mWeightsCheckbox = (CheckBox)findViewById(R.id.weights_checkbox);
         mAddButton = (ImageButton)findViewById(R.id.add_button);
         mNewDecisionText = (EditText)findViewById(R.id.new_decision_text);
@@ -104,6 +106,7 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             @Override
             public void onClick(View v)
             {
+                mParentLayout.requestFocus();
                 showSaveDialogue();
             }
         });
@@ -112,6 +115,8 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             @Override
             public void onClick(View v)
             {
+                mParentLayout.requestFocus();
+
                 PopupMenu popupMenu = new PopupMenu(NormalDecisionActivity.this, v);
                 popupMenu.setOnMenuItemClickListener(NormalDecisionActivity.this);
                 popupMenu.getMenu().add("Option1");
@@ -135,6 +140,7 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             @Override
             public void onClick(View v)
             {
+                mParentLayout.requestFocus();
                 makeDecision();
             }
         });
@@ -192,13 +198,16 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         removeButton.setBackgroundColor(Color.TRANSPARENT);
         ll.addView(removeButton);
 
-        EditText decision_et = new EditText(NormalDecisionActivity.this);
+        final EditText decision_et = new EditText(NormalDecisionActivity.this);
         decision_et.setText(option);
         LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
         ll.addView(decision_et, lp2);
 
-        EditText weight_et = new EditText(NormalDecisionActivity.this);
-        weight_et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        final EditText weight_et = new EditText(NormalDecisionActivity.this);
+        weight_et.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(1);
+        weight_et.setFilters(filters);
         weight_et.setText(weight);
         weight_et.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         if(!mWeightsCheckbox.isChecked())
@@ -223,55 +232,39 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             }
         });
 
-        //TextWatcher updates the values in the option variable
-        decision_et.addTextChangedListener(new TextWatcher() {
+        decision_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            public void onFocusChange(View v, boolean hasFocus)
             {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
-                if (s != "")
+                EditText et = (EditText)v;
+                if(!hasFocus)
                 {
-                    mOptions.get(mOptions.indexOf(opt)).setOption(s.toString());
+                    if(et.getText().equals(""))
+                    {
+                        String oldOption = mOptions.get(mOptions.indexOf(opt)).getOption();
+                        et.setText(oldOption);
+                    }
+                    else
+                    {
+                        mOptions.get(mOptions.indexOf(opt)).setOption(et.getText().toString());
+                    }
                 }
-                else
-                {
-                    showEmptyTextToast();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-
             }
         });
 
-        weight_et.addTextChangedListener(new TextWatcher() {
+        weight_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            public void onFocusChange(View v, boolean hasFocus)
             {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
-                if (s.toString().equals(""))
+                EditText et = (EditText)v;
+                if(!hasFocus)
                 {
-                    s= "1";
+                    if(et.getText().equals(""))
+                    {
+                        et.setText("0");
+                    }
                 }
-                mOptions.get(mOptions.indexOf(opt)).setWeight(Integer.parseInt(s.toString()));
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-
+                mOptions.get(mOptions.indexOf(opt)).setWeight(Integer.parseInt(et.getText().toString()));
             }
         });
 
@@ -333,18 +326,14 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
     private void changeWeightVisibility(boolean isChecked)
     {
         mNewDecisionWeightText.setEnabled(isChecked);
-        int visiblity;
-        if (isChecked)
+        int visibility = VISIBLE;
+        if (!isChecked)
         {
-            visiblity = VISIBLE;
-        }
-        else
-        {
-            visiblity = GONE;
+            visibility = GONE;
         }
         for (EditText et : mWeightFields)
         {
-            et.setVisibility(visiblity);
+            et.setVisibility(visibility);
         }
     }
 
