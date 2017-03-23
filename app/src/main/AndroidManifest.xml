@@ -17,7 +17,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".NormalDecisionActivity"
+		<activity android:name=".RandomDecisionActivity"
 			android:label="@string/random_decision"
 			android:parentActivityName=".StartActivity"
 			android:configChanges="orientation"

@@ -34,7 +34,7 @@ public class StartActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent i = NormalDecisionActivity.newIntent(StartActivity.this);
+                Intent i = RandomDecisionActivity.newIntent(StartActivity.this);
                 startActivity(i);
             }
         });

@@ -1,8 +1,11 @@
 package csci448.appigators.snappydecisions;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -24,12 +27,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
+
+import csci448.appigators.snappydecisions.database.SnappyDecisionsBaseHelper;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsCursorWrapper;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomDecisionOptionTable;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomDecisionTable;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class NormalDecisionActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener
+public class RandomDecisionActivity extends AppCompatActivity
 {
     RelativeLayout mParentLayout;
     ImageButton mAddButton;
@@ -43,7 +52,9 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
     TextView mDecisionText;
     ArrayList<EditText> mWeightFields = new ArrayList<>();
 
-    ArrayList<NormalDecisionOption> mOptions = new ArrayList<>();
+    ArrayList<RandomDecisionOption> mOptions = new ArrayList<>();
+
+    private SQLiteDatabase mDatabase;
 
     //region Static Methods
     /**
@@ -53,17 +64,24 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
      */
     public static Intent newIntent(Context packageContext)
     {
-        Intent i = new Intent(packageContext, NormalDecisionActivity.class);
+        Intent i = new Intent(packageContext, RandomDecisionActivity.class);
         return i;
     }
 
     //endregion
 
+    /**
+     * Sets up listeners on various buttons
+     * @param savedInstanceState holds saved variables
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal_decision);
+
+        Context context = getApplicationContext();
+        mDatabase = new SnappyDecisionsBaseHelper(context).getWritableDatabase();
 
         mParentLayout = (RelativeLayout)findViewById(R.id.activity_normal_decision);
         mWeightsCheckbox = (CheckBox)findViewById(R.id.weights_checkbox);
@@ -116,23 +134,7 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
             public void onClick(View v)
             {
                 mParentLayout.requestFocus();
-
-                PopupMenu popupMenu = new PopupMenu(NormalDecisionActivity.this, v);
-                popupMenu.setOnMenuItemClickListener(NormalDecisionActivity.this);
-                popupMenu.getMenu().add("Option1");
-                popupMenu.getMenu().add("Option2");
-                popupMenu.getMenu().add("Option3");
-                popupMenu.getMenu().add("Option4");
-                popupMenu.getMenu().add("Option5");
-                popupMenu.getMenu().add("Option6");
-                popupMenu.getMenu().add("Option7");
-                popupMenu.getMenu().add("Option8");
-                popupMenu.getMenu().add("Option9");
-                popupMenu.getMenu().add("Option10");
-                popupMenu.getMenu().add("Option11");
-                popupMenu.getMenu().add("Option12");
-                popupMenu.inflate(R.menu.popup_menu);
-                popupMenu.show();
+                showLoadDialogue(v);
             }
         });
 
@@ -146,13 +148,14 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         });
     }
 
-    public boolean onMenuItemClick(MenuItem item) {
-        Toast.makeText(NormalDecisionActivity.this, "Would change to saved decisions/weights combo, but not in alpha", Toast.LENGTH_SHORT).show();
-        return true;
-    }
+    //region Save and Load
 
-
-    void showSaveDialogue(){
+    /**
+     * Handles save options
+     * Opens window to take a name to save decision by
+     * Checks if name is valid and saved to database
+     */
+    private void showSaveDialogue(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Save Current Decisions and Weights As");
 
@@ -162,8 +165,24 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(NormalDecisionActivity.this, "Would save current settings and add as an option in the load popup, but not in alpha", Toast.LENGTH_SHORT).show();
+            public void onClick(DialogInterface dialog, int which)
+            {
+                String name = input.getText().toString();
+                if (name.equals(""))
+                {
+                    Toast.makeText(RandomDecisionActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(checkUniqueName(name))
+                {
+                    saveToDatabase(name);
+                }
+                else
+                {
+                    //Could also ask if want to overwrite but that's harder
+                    Toast.makeText(RandomDecisionActivity.this, "Name must be unique", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -175,35 +194,67 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         builder.show();
     }
 
-    //region Private methods
+    /**
+     * Opens load dialogue that has names of decisions
+     * Choosing one will load it and its options
+     * @param v
+     */
+    private void showLoadDialogue(View v)
+    {
+        PopupMenu loadMenu = new PopupMenu(RandomDecisionActivity.this, v);
+
+        ArrayList<String> names = getDecisionNames();
+        for (String s : names)
+        {
+            loadMenu.getMenu().add(s);
+        }
+
+        loadMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item)
+            {
+                String name = item.getTitle().toString();
+                loadOptions(name);
+                return true;
+            }
+        });
+
+        loadMenu.inflate(R.menu.popup_menu);
+        loadMenu.show();
+    }
+
+    //endregion
+
+    //region Adding New Decision Function
 
     /**
      * Adds a new decision to the scroll view by taking the data from the new fields
      * Stores new decision in arraylist of options
+     * Sets focus listeners on new text fields
      */
     private void addNewDecision(String option, String weight)
     {
-        final NormalDecisionOption opt = new NormalDecisionOption();
+        final RandomDecisionOption opt = new RandomDecisionOption();
 
         if(weight.equals(""))
         {
             weight = "1";
         }
 
-        final LinearLayout ll = new LinearLayout(NormalDecisionActivity.this);
+        final LinearLayout ll = new LinearLayout(RandomDecisionActivity.this);
         ll.setOrientation(LinearLayout.HORIZONTAL);
 
-        ImageButton removeButton = new ImageButton(NormalDecisionActivity.this);
+        ImageButton removeButton = new ImageButton(RandomDecisionActivity.this);
         removeButton.setImageResource(android.R.drawable.ic_delete);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
         ll.addView(removeButton);
 
-        final EditText decision_et = new EditText(NormalDecisionActivity.this);
+        final EditText decision_et = new EditText(RandomDecisionActivity.this);
         decision_et.setText(option);
         LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
         ll.addView(decision_et, lp2);
 
-        final EditText weight_et = new EditText(NormalDecisionActivity.this);
+        final EditText weight_et = new EditText(RandomDecisionActivity.this);
         weight_et.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(1);
@@ -272,28 +323,38 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
 
     }
 
+    /**
+     * Resets the fields for adding a new decision
+     */
     private void clearNewFields()
     {
         mNewDecisionText.setText("");
         mNewDecisionWeightText.setText("");
     }
 
+    //endregion
+
+    /**
+     * If weights are used: Takes into account the weights through a basic weight algorithm
+     * Otherwise chooses randomly
+     */
     private void makeDecision()
     {
         Random rand = new Random();
         if (mOptions.size() > 0)
         {
             int choice;
-            NormalDecisionOption optionChosen = null;
+            RandomDecisionOption optionChosen = null;
             if(mWeightsCheckbox.isChecked())
             {
+                Collections.shuffle(mOptions); //I don't know if this is needed
                 int sumWeights = 0;
-                for (NormalDecisionOption opt : mOptions)
+                for (RandomDecisionOption opt : mOptions)
                 {
                     sumWeights += opt.getWeight();
                 }
                 choice = rand.nextInt(sumWeights);
-                for (NormalDecisionOption opt : mOptions)
+                for (RandomDecisionOption opt : mOptions)
                 {
                     int weight = opt.getWeight();
                     if(choice < weight)
@@ -313,13 +374,15 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         }
         else
         {
-            Toast.makeText(NormalDecisionActivity.this, "No decisions to choose from!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RandomDecisionActivity.this, "No decisions to choose from!", Toast.LENGTH_SHORT).show();
         }
     }
 
+    //region Helper functions
+
     private void showEmptyTextToast()
     {
-        Toast.makeText(NormalDecisionActivity.this, "Option cannot be blank", Toast.LENGTH_SHORT).show();
+        Toast.makeText(RandomDecisionActivity.this, "Option cannot be blank", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -334,6 +397,141 @@ public class NormalDecisionActivity extends AppCompatActivity implements PopupMe
         for (EditText et : mWeightFields)
         {
             et.setVisibility(visibility);
+        }
+    }
+
+    /**
+     * Checks if the name is already in the database
+     * @param name name trying to be saved
+     * @return true if name is not in database already
+     */
+    private boolean checkUniqueName(String name)
+    {
+        ArrayList<String> allNames = getDecisionNames();
+
+        if(allNames.contains(name))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    //endregion
+
+    //region Database Stuff
+
+    /**
+     * Generic query builder
+     * @param dbName name of table
+     * @param whereClause where clause string
+     * @param whereArgs args for whereClause
+     * @return retur cursor in database
+     */
+    private SnappyDecisionsCursorWrapper queryTable(String dbName, String whereClause, String[] whereArgs)
+    {
+        Cursor cursor = mDatabase.query(dbName,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        return new SnappyDecisionsCursorWrapper(cursor);
+    }
+
+    /**
+     * Content values for DecisionTable
+     * @param name name to associate with decision
+     * @return ContentValues with name in it
+     */
+    private ContentValues getDecisionContentValues(String name)
+    {
+        ContentValues values = new ContentValues();
+        values.put(RandomDecisionTable.Cols.NAME, name);
+        return values;
+    }
+
+    /**
+     * Content values for Options
+     * @param name name for decision
+     * @param opt option to get weight and text from
+     * @return ContentValues with text, weight, and name of decision
+     */
+    private ContentValues getOptionContentValues(String name, RandomDecisionOption opt)
+    {
+        ContentValues values = new ContentValues();
+        values.put(RandomDecisionOptionTable.Cols.DECISION, name);
+        values.put(RandomDecisionOptionTable.Cols.OPTION, opt.getOption());
+        values.put(RandomDecisionOptionTable.Cols.WEIGHT, opt.getWeight());
+        return values;
+    }
+
+    /**
+     * Saves decision and options to database
+     * @param name primary key of RandomDecisionTable
+     */
+    private void saveToDatabase(String name)
+    {
+        ContentValues decisionValues = getDecisionContentValues(name);
+        mDatabase.insert(RandomDecisionTable.NAME, null, decisionValues);
+
+        for(RandomDecisionOption opt : mOptions)
+        {
+            ContentValues optionValues = getOptionContentValues(name, opt);
+            mDatabase.insert(RandomDecisionOptionTable.NAME, null, optionValues);
+        }
+    }
+
+    /**
+     * Runs through cursor to get names of all decisions
+     * @return list of strings
+     */
+    private ArrayList<String> getDecisionNames()
+    {
+        SnappyDecisionsCursorWrapper cursor = queryTable(RandomDecisionTable.NAME, null, null);
+        ArrayList<String> allNames = new ArrayList<>();
+        try
+        {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                allNames.add(cursor.getRandomDecisionName());
+                cursor.moveToNext();
+            }
+        }
+        finally
+        {
+            cursor.close();
+        }
+        return allNames;
+    }
+
+    /**
+     * Loads options for a given decision
+     * @param name Name of decision for the options
+     */
+    private void loadOptions(String name)
+    {
+        SnappyDecisionsCursorWrapper cursor = queryTable(RandomDecisionOptionTable.NAME, RandomDecisionOptionTable.Cols.DECISION + " = ?", new String[]{name});
+        clearNewFields();
+        mOptions.clear();
+        mWeightFields.clear();
+        mDecisionListLinearLayout.removeAllViews();
+        try
+        {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                String option = cursor.getRandomDecisionOptionText();
+                String weight = cursor. getRandomDecisionOptionWeight();
+                addNewDecision(option, weight);
+                cursor.moveToNext();
+            }
+        }
+        finally
+        {
+            cursor.close();
         }
     }
 
