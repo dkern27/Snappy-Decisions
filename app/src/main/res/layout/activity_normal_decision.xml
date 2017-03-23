@@ -13,31 +13,49 @@
 	android:focusableInTouchMode="true"
 	>
 
-	<EditText
+	<TextView
+		android:id="@+id/textView"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:inputType="numberDecimal"
-		android:ems="10"
-		android:id="@+id/weight_text"
-		android:layout_alignBottom="@+id/new_decision_text"
+		android:text="@string/instructions" />
+
+	<CheckBox
+		android:id="@+id/weights_checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_above="@+id/weight_text"
 		android:layout_alignParentEnd="true"
-		android:layout_toEndOf="@+id/new_decision_text"
-		android:layout_alignParentTop="true"
-		android:padding="8dp"
-		android:hint="@string/weight_hint"
-		android:textAlignment="center" />
+		android:checked="false"
+		android:text="@string/use_weights" />
 
 	<EditText
+		android:id="@+id/new_decision_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:inputType="textPersonName"
-		android:ems="10"
-		android:id="@+id/new_decision_text"
-		android:paddingLeft="8dp"
-		android:hint="@string/enter_text_hint"
-		android:layout_alignParentTop="true"
+		android:layout_alignBottom="@+id/add_button"
+		android:layout_below="@id/textView"
 		android:layout_toEndOf="@+id/add_button"
-		android:layout_alignBottom="@+id/add_button" />
+		android:ems="10"
+		android:hint="@string/enter_text_hint"
+		android:inputType="textPersonName"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"/>
+
+	<EditText
+		android:id="@+id/weight_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/new_decision_text"
+		android:layout_alignParentEnd="true"
+		android:layout_below="@id/textView"
+		android:layout_toEndOf="@+id/new_decision_text"
+		android:ems="10"
+		android:enabled="false"
+		android:hint="@string/weight_hint"
+		android:inputType="numberSigned"
+		android:maxLength="1"
+		android:padding="8dp"
+		android:textAlignment="center" />
 
 	<ImageButton
 		android:layout_width="wrap_content"
@@ -45,22 +63,35 @@
 		app:srcCompat="@android:drawable/ic_input_add"
 		android:id="@+id/add_button"
 		android:backgroundTint="@android:color/transparent"
-		android:layout_alignParentTop="true"
+		android:layout_below="@id/textView"
 		android:layout_alignParentStart="true" />
 
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/weight_text">
+		android:layout_below="@+id/weight_text"
+		android:id="@+id/linearLayout">
+
+		<TextView
+			android:id="@+id/your_options_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@+id/linearLayout"
+			android:layout_gravity="center"
+			android:textSize="16dp"
+			android:textAlignment="center"
+			android:padding="8dp"
+			android:text="@string/your_options" />
 
 		<ScrollView
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:id="@+id/decision_list_view"
-			android:layout_below="@+id/weight_text"
+			android:layout_below="@+id/your_options_textview"
 			android:layout_alignParentStart="true"
-			android:layout_weight="3">
+			android:layout_weight="3"
+			android:focusable="true">
 
 			<LinearLayout
 				android:orientation="vertical"
@@ -93,7 +124,7 @@
 				style="@style/Widget.AppCompat.Button.Colored"
 				android:layout_alignParentTop="true"
 				android:layout_alignParentStart="true"
-				android:layout_marginStart="11dp" />
+				android:layout_alignParentLeft="true" />
 
 			<TextView
 				android:layout_width="wrap_content"
@@ -109,10 +140,10 @@
 				android:text="@string/make_decision_button"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_below="@+id/decision_chosen_text"
-				android:layout_centerHorizontal="true"
 				android:id="@+id/make_decision_button"
-				style="@style/Widget.AppCompat.Button.Colored" />
+				style="@style/Widget.AppCompat.Button.Colored"
+				android:layout_alignParentTop="true"
+				android:layout_centerHorizontal="true" />
 
 		</RelativeLayout>
 	</LinearLayout>

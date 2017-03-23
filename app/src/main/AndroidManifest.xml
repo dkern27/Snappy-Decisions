@@ -9,26 +9,43 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
 		<activity android:name=".StartActivity"
-			android:theme="@style/AppTheme.NoActionBar">
+			android:theme="@style/AppTheme.NoActionBar"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name=".NormalDecisionActivity"
-			android:parentActivityName=".StartActivity">
+			android:label="@string/random_decision"
+			android:parentActivityName=".StartActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 		</activity>
 		<activity android:name=".FoodDecisionActivity"
-			android:parentActivityName=".StartActivity">
+			android:label="@string/food_near_me"
+			android:parentActivityName=".StartActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 		</activity>
 		<activity android:name=".ProductDecisionActivity"
-			android:parentActivityName=".StartActivity">
+			android:label="@string/product_decision"
+			android:parentActivityName=".StartActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 		</activity>
 		<activity android:name=".FoodFiltersActivity"
-			android:parentActivityName=".FoodDecisionActivity">
+			android:label="@string/food_near_me"
+			android:parentActivityName=".FoodDecisionActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 		</activity>
 		<activity android:name=".ProductInfoActivity"
-				  android:parentActivityName=".ProductDecisionActivity">
+			android:label="@string/product_decision"
+			android:parentActivityName=".ProductDecisionActivity"
+			android:configChanges="orientation"
+			android:screenOrientation="portrait">
 		</activity>
 		<meta-data
 			android:name="io.fabric.ApiKey"
