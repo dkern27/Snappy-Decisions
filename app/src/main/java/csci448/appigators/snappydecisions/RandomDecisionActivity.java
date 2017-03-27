@@ -78,7 +78,7 @@ public class RandomDecisionActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_normal_decision);
+        setContentView(R.layout.activity_random_decision);
 
         Context context = getApplicationContext();
         mDatabase = new SnappyDecisionsBaseHelper(context).getWritableDatabase();
@@ -153,11 +153,11 @@ public class RandomDecisionActivity extends AppCompatActivity
     /**
      * Handles save options
      * Opens window to take a name to save decision by
-     * Checks if name is valid and saved to database
+     * Checks if name is valid and saves to database
      */
     private void showSaveDialogue(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Save Current Decisions and Weights As");
+        builder.setTitle("Save Decision as");
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -204,11 +204,17 @@ public class RandomDecisionActivity extends AppCompatActivity
         PopupMenu loadMenu = new PopupMenu(RandomDecisionActivity.this, v);
 
         ArrayList<String> names = getDecisionNames();
+
+        if(names.isEmpty())
+        {
+            Toast.makeText(this, "No decisions to load", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         for (String s : names)
         {
             loadMenu.getMenu().add(s);
         }
-
         loadMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item)
