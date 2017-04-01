@@ -3,8 +3,10 @@ package csci448.appigators.snappydecisions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class ProductDecisionActivity extends AppCompatActivity {
@@ -55,7 +58,7 @@ public class ProductDecisionActivity extends AppCompatActivity {
     }
 
     private void addNewProduct() {
-        String productName = mAddProductText.getText().toString();
+        final String productName = mAddProductText.getText().toString();
         EditText textView = new EditText(ProductDecisionActivity.this);
         textView.setText(productName);
 
@@ -76,8 +79,16 @@ public class ProductDecisionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent i = ProductInfoActivity.newIntent(ProductDecisionActivity.this);
-                startActivity(i);
+                StringHelper helper = new StringHelper();
+                Uri uri = Uri.parse("https://www.amazon.com/s/" +
+                        "ref=nb_sb_noss?" +
+                        "url=search-alias%3Daps&" +
+                        "field-keywords=" +
+                        helper.convertToUTF8(productName));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+//                Intent i = ProductInfoActivity.newIntent(ProductDecisionActivity.this);
+//                startActivity(i);
             }
         });
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -89,5 +100,30 @@ public class ProductDecisionActivity extends AppCompatActivity {
 
     private void clearNewFields() {
         mAddProductText.setText("");
+    }
+
+    public class StringHelper {
+
+        // convert from UTF-8 -> internal Java String format
+        public String convertFromUTF8(String s) {
+            String out = null;
+            try {
+                out = new String(s.getBytes("ISO-8859-1"), "UTF-8");
+            } catch (java.io.UnsupportedEncodingException e) {
+                return null;
+            }
+            return out;
+        }
+
+        // convert from internal Java String format -> UTF-8
+        public String convertToUTF8(String s) {
+            String out = null;
+            try {
+                out = new String(s.getBytes("UTF-8"), "ISO-8859-1");
+            } catch (java.io.UnsupportedEncodingException e) {
+                return null;
+            }
+            return out;
+        }
     }
 }
