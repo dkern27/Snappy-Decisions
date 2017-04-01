@@ -404,6 +404,8 @@ public class RandomDecisionActivity extends AppCompatActivity
         {
             et.setVisibility(visibility);
         }
+
+        mNewDecisionWeightText.setVisibility(visibility);
     }
 
     /**
