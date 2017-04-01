@@ -79,12 +79,11 @@ public class ProductDecisionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                StringHelper helper = new StringHelper();
                 Uri uri = Uri.parse("https://www.amazon.com/s/" +
                         "ref=nb_sb_noss?" +
                         "url=search-alias%3Daps&" +
                         "field-keywords=" +
-                        helper.convertToUTF8(productName));
+                        convertToUTF8(productName));
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
 //                Intent i = ProductInfoActivity.newIntent(ProductDecisionActivity.this);
@@ -102,28 +101,13 @@ public class ProductDecisionActivity extends AppCompatActivity {
         mAddProductText.setText("");
     }
 
-    public class StringHelper {
-
-        // convert from UTF-8 -> internal Java String format
-        public String convertFromUTF8(String s) {
-            String out = null;
-            try {
-                out = new String(s.getBytes("ISO-8859-1"), "UTF-8");
-            } catch (java.io.UnsupportedEncodingException e) {
-                return null;
-            }
-            return out;
+    public String convertToUTF8(String s) {
+        String utf8Encoded = null;
+        try {
+            utf8Encoded = new String(s.getBytes("UTF-8"), "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return null;
         }
-
-        // convert from internal Java String format -> UTF-8
-        public String convertToUTF8(String s) {
-            String out = null;
-            try {
-                out = new String(s.getBytes("UTF-8"), "ISO-8859-1");
-            } catch (java.io.UnsupportedEncodingException e) {
-                return null;
-            }
-            return out;
-        }
+        return utf8Encoded;
     }
 }
