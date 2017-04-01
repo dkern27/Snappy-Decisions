@@ -14,15 +14,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<TextView
-			android:text="SNAZZY LOGO"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+		<ImageView
 			android:id="@+id/LOGO"
 			android:layout_centerHorizontal="true"
-			android:textSize="54sp"
-			android:elevation="18dp"
-			android:textStyle="normal|bold|italic" />
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:src="@drawable/snappydecisions" />
 
 		<Button
 			android:text="@string/random_decision"
