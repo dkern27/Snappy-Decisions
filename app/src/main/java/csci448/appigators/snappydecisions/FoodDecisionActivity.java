@@ -26,6 +26,7 @@ import com.yelp.fusion.client.models.Business;
 import com.yelp.fusion.client.models.SearchResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,13 +42,18 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     YelpFusionApiFactory apiFactory;
     YelpFusionApi yelpFusionApi;
     int progressBarMinValue = 1;
+    private String addressPlusName;
+    private String websiteUrl;
 
     Button mFiltersButton;
     Button mSaveButton;
     Button mLoadButton;
     Button mMakeDecisionButton;
+    Button mOpenInMapsButton;
+    Button mOpenWebsiteButton;
     SeekBar mSeekBar;
     TextView mDistanceText;
+    TextView mDecisionText;
 
     void connectToYelp(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -71,14 +77,15 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         params.put("latitude", "39.7555");
         params.put("longitude", "-105.2226");
         params.put("categories", "burgers");
+        params.put("limit", "50");
+
+        //radius param isnt perfect, need to also filter results for distance
+        //but including the param helps keep the list as large as possible
         int radius = (int) 1609.34 * (mSeekBar.getProgress() + progressBarMinValue);
         if (radius > 40000){
             radius = 40000;//max value is a little less than 25 miles and over 40k causes error for yelp API
         }
-        //Toast.makeText(FoodDecisionActivity.this, Integer.toString(radius), Toast.LENGTH_SHORT).show();
         params.put("radius", Integer.toString(radius));
-        params.put("limit", "50");
-        //golden: 39.7555° N, 105.2211° W
 
         try{
 
@@ -87,22 +94,59 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             ArrayList<Business> businesses = searchResponse.getBusinesses();
             //String businessName = businesses.get(0).getName();
             //Toast.makeText(FoodDecisionActivity.this, "Number of businesses: " + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
+
+            //removing things too far away
+            ArrayList<Integer> indicesToRemove = new ArrayList<>();
+            for (int i = 0; i < businesses.size(); i++){
+                if (businesses.get(i).getDistance() > 1609.34 * (mSeekBar.getProgress() + progressBarMinValue)){
+                    indicesToRemove.add(i);
+                }
+            }
+
+            //work from right to left
+            Collections.reverse(indicesToRemove);
+
+            for (int i = 0; i < indicesToRemove.size(); i++){
+                int index = indicesToRemove.get(i);
+                businesses.remove(index);
+            }
+            //
+
             if (businesses.size() > 0){
                 Random rand = new Random();
                 int choice = rand.nextInt(businesses.size());
-                Toast.makeText(FoodDecisionActivity.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
-
-
-
-                //this opens map
-                //String url = "http://maps.google.com/maps?daddr="+businesses.get(choice).getName();
-                String url = "http://maps.google.com/maps?daddr=" + businesses.get(choice).getLocation().getAddress1() + " " + businesses.get(choice).getName();
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,  Uri.parse(url));
-                startActivity(intent);
+                //Toast.makeText(FoodDecisionActivity.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
+                mDecisionText.setText(businesses.get(choice).getName() + " " + Integer.toString((int) businesses.get(choice).getDistance()) + " " + Integer.toString(businesses.size()));
+                addressPlusName = businesses.get(choice).getLocation().getAddress1() + " " + businesses.get(choice).getName();
+                websiteUrl = businesses.get(choice).getUrl();//yelp website
+            }else{
+                mDecisionText.setText("");
+                addressPlusName = "";
+                websiteUrl = "";
             }
 
         }catch(java.io.IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    void openInMaps(){
+        if (!addressPlusName.equals("")) {
+            String url = "http://maps.google.com/maps?daddr=" + addressPlusName;
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        }else{
+            Toast.makeText(FoodDecisionActivity.this, "No decision made yet!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void openWebsite(){
+        if (!websiteUrl.equals("")) {
+            String url = websiteUrl;
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        }else{
+            Toast.makeText(FoodDecisionActivity.this, "No decision made yet!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -134,6 +178,8 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_decision);
 
+        addressPlusName = "";
+        websiteUrl = "";
         connectToYelp();
 
         mFiltersButton = (Button)findViewById(R.id.filters_button);
@@ -143,6 +189,9 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         mDistanceText = (TextView) findViewById(R.id.distance_text);
         mDistanceText.setText(getString(R.string.distance, mSeekBar.getProgress() + progressBarMinValue));
         mMakeDecisionButton = (Button)findViewById(R.id.make_decision_button);
+        mOpenInMapsButton = (Button)findViewById(R.id.open_in_maps_button);
+        mOpenWebsiteButton = (Button)findViewById(R.id.website_button);
+        mDecisionText = (TextView)findViewById(R.id.decision_chosen_text);
 
         mMakeDecisionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +199,24 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             {
                 //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
                 searchYelp();
+            }
+        });
+
+        mOpenInMapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
+                openInMaps();
+            }
+        });
+
+        mOpenWebsiteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
+                openWebsite();
             }
         });
 

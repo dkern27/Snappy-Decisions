@@ -26,4 +26,7 @@
 	<string name="more_than_thirty">More than $30</string>
 	<string name="alpha_filters_note">Note that this filters list is not representative of the final version which will contain many more options.</string>
 	<string name="your_options">Your Options</string>
+	<string name="open_in_maps_button">Map It!</string>
+	<string name="website_button">Yelp</string>
+
 </resources>
