@@ -35,11 +35,26 @@ public class FoodFiltersActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_filters);
 
+        //for saving filter
+        Intent savedDataIntent = getIntent();
+        mFiltersArray = savedDataIntent.getIntegerArrayListExtra(FILTERS_KEY);
+
         mAmericanFilter = (CheckBox) findViewById(R.id.american_filter);
+
+
         mAsianFilter = (CheckBox) findViewById(R.id.asian_filter);
+
+
         mMexicanFilter = (CheckBox) findViewById(R.id.mexican_filter);
+        boolean myBool = mFiltersArray.get(Filter.MEXICAN.ordinal()) > 0 ? true : false ;
+        mMexicanFilter.setChecked(myBool);
+
         m$Filter = (CheckBox) findViewById(R.id.low_filter);
+
+
         m$$Filter = (CheckBox) findViewById(R.id.midde_filter);
+
+
         m$$$Filter = (CheckBox) findViewById(R.id.high_filter);
 
         final Intent returnIntent = new Intent();
