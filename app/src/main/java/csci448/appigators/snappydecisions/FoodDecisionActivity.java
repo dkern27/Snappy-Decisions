@@ -66,7 +66,8 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     TextView mChoicesText;
 
     private final static String FILTERS_KEY = "FILTERS_KEY";
-    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(6, 0));
+    private int NUM_FILTERS = 7;
+    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));
 
     //will need for getting actual location
 //    public void checkPermission(){
@@ -101,13 +102,39 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         params.put("latitude", "39.7555");
         params.put("longitude", "-105.2226");
 
-        //testing mexican filter
+        //adding food type filters
+        ArrayList<String> stringsToAdd = new ArrayList<>();
+        String categoriesString = "";
         if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1){
-            params.put("categories", "mexican");
+            stringsToAdd.add("mexican");
+            stringsToAdd.add("newmexican");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()) == 1){
+            stringsToAdd.add("newamerican");
+            stringsToAdd.add("tradamerican");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()) == 1){
+            stringsToAdd.add("panasian");
+            stringsToAdd.add("asianfusion");
         }
 
-        //params.put("categories", "burgers");
+        for(int i = 0; i < stringsToAdd.size(); i++){
+            if(i == 0){
+                categoriesString += stringsToAdd.get(i);
+            }else{
+                categoriesString = categoriesString + "," + stringsToAdd.get(i);
+            }
+        }
+
+        if(!categoriesString.equals("")){
+            params.put("categories", categoriesString);
+        }
+
+        //adding pricing filters
+
+
         params.put("limit", "50");
+        params.put("open_now","true");
 
         //radius param isnt perfect, need to also filter results for distance
         //but including the param helps keep the list as large as possible

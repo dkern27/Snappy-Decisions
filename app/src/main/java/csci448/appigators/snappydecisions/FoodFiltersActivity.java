@@ -17,7 +17,7 @@ import java.util.Collections;
 
 public class FoodFiltersActivity extends AppCompatActivity
 {
-    public enum Filter{AMERICAN, ASIAN, MEXICAN, $, $$, $$$};
+    public enum Filter{AMERICAN, ASIAN, MEXICAN, $, $$, $$$, $$$$};
 
     CheckBox mAmericanFilter;
     CheckBox mAsianFilter;
@@ -25,48 +25,119 @@ public class FoodFiltersActivity extends AppCompatActivity
     CheckBox m$Filter;
     CheckBox m$$Filter;
     CheckBox m$$$Filter;
+    CheckBox m$$$$Filter;
+    private int NUM_FILTERS = 7;
 
     private final static String FILTERS_KEY = "FILTERS_KEY";
-    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(6, 0));
+    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));
 
+    private boolean integerToBoolean(int x){
+        return x > 0 ? true: false;
+    }
+
+    private int booleanToInteger(boolean b){
+        return b ? 1 : 0;
+    }
+
+    private void setReturningIntent(){
+        final Intent returnIntent = new Intent();
+        returnIntent.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
+        setResult(Activity.RESULT_OK, returnIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_filters);
 
-        //for saving filter
+        //for saving filters
         Intent savedDataIntent = getIntent();
         mFiltersArray = savedDataIntent.getIntegerArrayListExtra(FILTERS_KEY);
 
         mAmericanFilter = (CheckBox) findViewById(R.id.american_filter);
-
+        mAmericanFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.AMERICAN.ordinal())));
 
         mAsianFilter = (CheckBox) findViewById(R.id.asian_filter);
-
+        mAsianFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.ASIAN.ordinal())));
 
         mMexicanFilter = (CheckBox) findViewById(R.id.mexican_filter);
-        boolean myBool = mFiltersArray.get(Filter.MEXICAN.ordinal()) > 0 ? true : false ;
-        mMexicanFilter.setChecked(myBool);
+        mMexicanFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.MEXICAN.ordinal())));
 
         m$Filter = (CheckBox) findViewById(R.id.low_filter);
-
+        m$Filter.setChecked(integerToBoolean(mFiltersArray.get(Filter.$.ordinal())));
 
         m$$Filter = (CheckBox) findViewById(R.id.midde_filter);
-
+        m$$Filter.setChecked(integerToBoolean(mFiltersArray.get(Filter.$$.ordinal())));
 
         m$$$Filter = (CheckBox) findViewById(R.id.high_filter);
+        m$$$Filter.setChecked(integerToBoolean(mFiltersArray.get(Filter.$$$.ordinal())));
 
-        final Intent returnIntent = new Intent();
+        m$$$$Filter = (CheckBox) findViewById(R.id.highest_filter);
+        m$$$$Filter.setChecked(integerToBoolean(mFiltersArray.get(Filter.$$$$.ordinal())));
+
+        //for sending result back
+
+
+        mAmericanFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.AMERICAN.ordinal(), booleanToInteger(mAmericanFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
 
         mMexicanFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                int myInt = (mMexicanFilter.isChecked()) ? 1 : 0;
-                mFiltersArray.add(Filter.MEXICAN.ordinal(), myInt);
-                returnIntent.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
-                setResult(Activity.RESULT_OK, returnIntent);
+                mFiltersArray.set(Filter.MEXICAN.ordinal(), booleanToInteger(mMexicanFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mAsianFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.ASIAN.ordinal(), booleanToInteger(mAsianFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        m$Filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.$.ordinal(), booleanToInteger(m$Filter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        m$$Filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.$$.ordinal(), booleanToInteger(m$$Filter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        m$$$Filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.$$$.ordinal(), booleanToInteger(m$$$Filter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        m$$$$Filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.$$$$.ordinal(), booleanToInteger(m$$$$Filter.isChecked()));
+                setReturningIntent();
             }
         });
     }

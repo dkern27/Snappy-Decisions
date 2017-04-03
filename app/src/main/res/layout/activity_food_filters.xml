@@ -57,6 +57,12 @@
         android:layout_height="wrap_content"
         android:text="@string/more_than_thirty"
         />
+    <CheckBox
+        android:id="@+id/highest_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/highest_money"
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
