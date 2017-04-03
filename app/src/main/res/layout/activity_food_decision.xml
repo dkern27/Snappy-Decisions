@@ -44,6 +44,7 @@
             android:id="@+id/decision_chosen_text"
             android:textSize="30sp"
             android:layout_gravity="center_horizontal"
+	        android:textAlignment="center"
             />
 
 		<TextView
