@@ -253,7 +253,7 @@ public class RandomDecisionActivity extends AppCompatActivity
         ImageButton removeButton = new ImageButton(RandomDecisionActivity.this);
         removeButton.setImageResource(R.drawable.remove);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
-        removeButton.setPadding(35,0,30,0);
+        removeButton.setPadding(35,0,35,0);
         ll.addView(removeButton);
 
         final EditText decision_et = new EditText(RandomDecisionActivity.this);
@@ -267,12 +267,13 @@ public class RandomDecisionActivity extends AppCompatActivity
         filters[0] = new InputFilter.LengthFilter(1);
         weight_et.setFilters(filters);
         weight_et.setText(weight);
+        //weight_et.setEms(3);
         weight_et.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         if(!mWeightsCheckbox.isChecked())
         {
             weight_et.setVisibility(GONE);
         }
-        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(187, ViewGroup.LayoutParams.WRAP_CONTENT, 0);
         ll.addView(weight_et, lp3);
 
         mDecisionListLinearLayout.addView(ll);
