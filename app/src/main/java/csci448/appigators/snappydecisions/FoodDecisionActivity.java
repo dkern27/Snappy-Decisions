@@ -1,11 +1,18 @@
 package csci448.appigators.snappydecisions;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -35,6 +42,8 @@ import java.util.Random;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.content.ContentValues.TAG;
+
 public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener
 {
     private String appId = "JYFlwDGsPiOAZBKgjm--_g";
@@ -54,6 +63,21 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     SeekBar mSeekBar;
     TextView mDistanceText;
     TextView mDecisionText;
+    TextView mChoicesText;
+
+    private final static String FILTERS_KEY = "FILTERS_KEY";
+    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(6, 0));
+
+    //will need for getting actual location
+//    public void checkPermission(){
+//        Log.d(TAG, "checkPermission()");
+//        if (ContextCompat.checkSelfPermission(FoodDecisionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(FoodDecisionActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+//        {
+//            Log.d(TAG, "Requesting Permission");
+//            ActivityCompat.requestPermissions(FoodDecisionActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 123);
+//        }
+//    }
 
     void connectToYelp(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -71,12 +95,18 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     void searchYelp(){
         Map<String, String> params = new HashMap<>();
 
-        // general params
-        // general params
         params.put("term", "restaurants");
+
+        //golden, need to change to get to current location!
         params.put("latitude", "39.7555");
         params.put("longitude", "-105.2226");
-        params.put("categories", "burgers");
+
+        //testing mexican filter
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1){
+            params.put("categories", "mexican");
+        }
+
+        //params.put("categories", "burgers");
         params.put("limit", "50");
 
         //radius param isnt perfect, need to also filter results for distance
@@ -116,11 +146,13 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
                 Random rand = new Random();
                 int choice = rand.nextInt(businesses.size());
                 //Toast.makeText(FoodDecisionActivity.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
-                mDecisionText.setText(businesses.get(choice).getName() + " " + Integer.toString((int) businesses.get(choice).getDistance()) + " " + Integer.toString(businesses.size()));
+                mDecisionText.setText(businesses.get(choice).getName());
+                mChoicesText.setText("Chosen From " + Integer.toString(businesses.size()) + " businesses.");
                 addressPlusName = businesses.get(choice).getLocation().getAddress1() + " " + businesses.get(choice).getName();
                 websiteUrl = businesses.get(choice).getUrl();//yelp website
             }else{
                 mDecisionText.setText("");
+                mChoicesText.setText("");
                 addressPlusName = "";
                 websiteUrl = "";
             }
@@ -192,6 +224,7 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         mOpenInMapsButton = (Button)findViewById(R.id.open_in_maps_button);
         mOpenWebsiteButton = (Button)findViewById(R.id.website_button);
         mDecisionText = (TextView)findViewById(R.id.decision_chosen_text);
+        mChoicesText = (TextView)findViewById(R.id.num_choices_text);
 
         mMakeDecisionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,7 +258,9 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             public void onClick(View v)
             {
                 Intent i = FoodFiltersActivity.newIntent(FoodDecisionActivity.this);
-                startActivity(i);
+                i.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
+                //startActivity(i);
+                startActivityForResult(i,0);
             }
         });
 
@@ -297,5 +332,12 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     {
         Intent i = new Intent(packageContext, FoodDecisionActivity.class);
         return i;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == 0 && resultCode == RESULT_OK){
+            mFiltersArray = data.getIntegerArrayListExtra(FILTERS_KEY);
+        }
     }
 }
