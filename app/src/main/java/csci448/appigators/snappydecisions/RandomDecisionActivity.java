@@ -251,12 +251,14 @@ public class RandomDecisionActivity extends AppCompatActivity
         ll.setOrientation(LinearLayout.HORIZONTAL);
 
         ImageButton removeButton = new ImageButton(RandomDecisionActivity.this);
-        removeButton.setImageResource(android.R.drawable.ic_delete);
+        removeButton.setImageResource(R.drawable.remove);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
+        removeButton.setPadding(35,0,30,0);
         ll.addView(removeButton);
 
         final EditText decision_et = new EditText(RandomDecisionActivity.this);
         decision_et.setText(option);
+        //decision_et.setPadding(0,8,0,8);
         LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
         ll.addView(decision_et, lp2);
 
