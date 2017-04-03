@@ -26,7 +26,7 @@ public class FoodFiltersActivity extends AppCompatActivity
     CheckBox m$$Filter;
     CheckBox m$$$Filter;
     CheckBox m$$$$Filter;
-    private int NUM_FILTERS = 7;
+    private int NUM_FILTERS = Filter.values().length;
 
     private final static String FILTERS_KEY = "FILTERS_KEY";
     private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));

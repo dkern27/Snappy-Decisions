@@ -66,7 +66,7 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
     TextView mChoicesText;
 
     private final static String FILTERS_KEY = "FILTERS_KEY";
-    private int NUM_FILTERS = 7;
+    private int NUM_FILTERS = FoodFiltersActivity.Filter.values().length;
     private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));
 
     //will need for getting actual location
@@ -131,7 +131,32 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         }
 
         //adding pricing filters
+        ArrayList<String> pricingFilters = new ArrayList<>();
+        String pricingFilterString = "";
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$.ordinal()) == 1){
+            pricingFilters.add("1");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$.ordinal()) == 1){
+            pricingFilters.add("2");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$.ordinal()) == 1){
+            pricingFilters.add("3");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$$.ordinal()) == 1){
+            pricingFilters.add("4");
+        }
 
+        for(int i = 0; i < pricingFilters.size(); i++){
+            if(i == 0){
+                pricingFilterString += pricingFilters.get(i);
+            }else{
+                pricingFilterString = pricingFilterString + "," + pricingFilters.get(i);
+            }
+        }
+
+        if(!pricingFilterString.equals("")){
+            params.put("price", pricingFilterString);
+        }
 
         params.put("limit", "50");
         params.put("open_now","true");
