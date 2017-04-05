@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -38,7 +37,7 @@ import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomD
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class RandomDecisionActivity extends AppCompatActivity
+public class RandomDecisionActivity extends NavigationDrawerActivity
 {
     RelativeLayout mParentLayout;
     ImageButton mAddButton;
@@ -79,6 +78,7 @@ public class RandomDecisionActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_random_decision);
+        super.onCreateDrawer();
 
         Context context = getApplicationContext();
         mDatabase = new SnappyDecisionsBaseHelper(context).getWritableDatabase();
