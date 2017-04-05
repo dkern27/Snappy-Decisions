@@ -1,26 +1,19 @@
 package csci448.appigators.snappydecisions;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -35,16 +28,14 @@ import com.yelp.fusion.client.models.SearchResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
-import retrofit2.Response;
 
-import static android.content.ContentValues.TAG;
+import static android.app.Activity.RESULT_OK;
 
-public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener
+public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuItemClickListener
 {
     private String appId = "JYFlwDGsPiOAZBKgjm--_g";
     private String appSecret = "yYz53VHoK1p6wMa3lQ7B6jS7v7LNYx94oqAaMeyiXEmncxzi2p7Yxs9azWcDHb6K";
@@ -67,18 +58,148 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
 
     private final static String FILTERS_KEY = "FILTERS_KEY";
     private int NUM_FILTERS = FoodFiltersActivity.Filter.values().length;
-    private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));
+    private ArrayList<Integer> mFiltersArray = new ArrayList<>(Collections.nCopies(NUM_FILTERS, 0));
+
+    //region Overridden methods
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        addressPlusName = "";
+        websiteUrl = "";
+        connectToYelp();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        View v = inflater.inflate(R.layout.fragment_food_decision, container, false);
+        mFiltersButton = (Button)v.findViewById(R.id.filters_button);
+        mSaveButton = (Button)v.findViewById(R.id.save_button);
+        mLoadButton = (Button)v.findViewById(R.id.load_button);
+        mSeekBar = (SeekBar)v.findViewById(R.id.seekBar);
+        mDistanceText = (TextView)v.findViewById(R.id.distance_text);
+        mDistanceText.setText(getString(R.string.distance, mSeekBar.getProgress() + progressBarMinValue));
+        mMakeDecisionButton = (Button)v.findViewById(R.id.make_decision_button);
+        mOpenInMapsButton = (Button)v.findViewById(R.id.open_in_maps_button);
+        mOpenWebsiteButton = (Button)v.findViewById(R.id.website_button);
+        mDecisionText = (TextView)v.findViewById(R.id.decision_chosen_text);
+        mChoicesText = (TextView)v.findViewById(R.id.num_choices_text);
+
+        mMakeDecisionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //Toast.makeText(FoodDecisionFragment.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
+                searchYelp();
+            }
+        });
+
+        mOpenInMapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //Toast.makeText(FoodDecisionFragment.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
+                openInMaps();
+            }
+        });
+
+        mOpenWebsiteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                //Toast.makeText(FoodDecisionFragment.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
+                openWebsite();
+            }
+        });
+
+        mFiltersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = FoodFiltersActivity.newIntent(getActivity());
+                i.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
+                //startActivity(i);
+                startActivityForResult(i,0);
+            }
+        });
+
+
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showSaveDialogue();
+                //Toast.makeText(FoodDecisionFragment.this, "Would open dialogue to save current settings", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mLoadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(getContext(), v);
+                popupMenu.setOnMenuItemClickListener(FoodDecisionFragment.this);
+                popupMenu.getMenu().add("Option1");
+                popupMenu.getMenu().add("Option2");
+                popupMenu.getMenu().add("Option3");
+                popupMenu.getMenu().add("Option4");
+                popupMenu.getMenu().add("Option5");
+                popupMenu.getMenu().add("Option6");
+                popupMenu.getMenu().add("Option7");
+                popupMenu.getMenu().add("Option8");
+                popupMenu.getMenu().add("Option9");
+                popupMenu.getMenu().add("Option10");
+                popupMenu.getMenu().add("Option11");
+                popupMenu.getMenu().add("Option12");
+                popupMenu.inflate(R.menu.popup_menu);
+                popupMenu.show();
+            }
+        });
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                // TODO Auto-generated method stub
+                int progressChanged = progress + progressBarMinValue;
+                mDistanceText.setText(getString(R.string.distance, progressChanged));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == 0 && resultCode == RESULT_OK){
+            mFiltersArray = data.getIntegerArrayListExtra(FILTERS_KEY);
+        }
+    }
+
+    //endregion
 
     //will need for getting actual location
 //    public void checkPermission(){
 //        Log.d(TAG, "checkPermission()");
-//        if (ContextCompat.checkSelfPermission(FoodDecisionActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(FoodDecisionActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+//        if (ContextCompat.checkSelfPermission(FoodDecisionFragment.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(FoodDecisionFragment.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
 //        {
 //            Log.d(TAG, "Requesting Permission");
-//            ActivityCompat.requestPermissions(FoodDecisionActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 123);
+//            ActivityCompat.requestPermissions(FoodDecisionFragment.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 123);
 //        }
 //    }
+
+    //region Yelp API
 
     void connectToYelp(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -175,7 +296,7 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             SearchResponse searchResponse = call.execute().body();
             ArrayList<Business> businesses = searchResponse.getBusinesses();
             //String businessName = businesses.get(0).getName();
-            //Toast.makeText(FoodDecisionActivity.this, "Number of businesses: " + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(FoodDecisionFragment.this, "Number of businesses: " + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
 
             //removing things too far away
             ArrayList<Integer> indicesToRemove = new ArrayList<>();
@@ -197,7 +318,7 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             if (businesses.size() > 0){
                 Random rand = new Random();
                 int choice = rand.nextInt(businesses.size());
-                //Toast.makeText(FoodDecisionActivity.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(FoodDecisionFragment.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
                 mDecisionText.setText(businesses.get(choice).getName());
                 mChoicesText.setText("Chosen From " + Integer.toString(businesses.size()) + " businesses.");
                 addressPlusName = businesses.get(choice).getLocation().getAddress1() + " " + businesses.get(choice).getName();
@@ -214,13 +335,15 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         }
     }
 
+    //endregion
+
     void openInMaps(){
         if (!addressPlusName.equals("")) {
             String url = "http://maps.google.com/maps?daddr=" + addressPlusName;
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         }else{
-            Toast.makeText(FoodDecisionActivity.this, "No decision made yet!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No decision made yet!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -230,22 +353,24 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         }else{
-            Toast.makeText(FoodDecisionActivity.this, "No decision made yet!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No decision made yet!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    void showSaveDialogue(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    //region Save/Load
+
+    private void showSaveDialogue(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Save Current Distance and Filters As");
 
-        final EditText input = new EditText(this);
+        final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(FoodDecisionActivity.this, "Would save current settings and add as an option in the load popup, but not in alpha", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Would save current settings and add as an option in the load popup, but not in alpha", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -257,139 +382,11 @@ public class FoodDecisionActivity extends AppCompatActivity implements PopupMenu
         builder.show();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_food_decision);
-
-        addressPlusName = "";
-        websiteUrl = "";
-        connectToYelp();
-
-        mFiltersButton = (Button)findViewById(R.id.filters_button);
-        mSaveButton = (Button)findViewById(R.id.save_button);
-        mLoadButton = (Button)findViewById(R.id.load_button);
-        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
-        mDistanceText = (TextView) findViewById(R.id.distance_text);
-        mDistanceText.setText(getString(R.string.distance, mSeekBar.getProgress() + progressBarMinValue));
-        mMakeDecisionButton = (Button)findViewById(R.id.make_decision_button);
-        mOpenInMapsButton = (Button)findViewById(R.id.open_in_maps_button);
-        mOpenWebsiteButton = (Button)findViewById(R.id.website_button);
-        mDecisionText = (TextView)findViewById(R.id.decision_chosen_text);
-        mChoicesText = (TextView)findViewById(R.id.num_choices_text);
-
-        mMakeDecisionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
-                searchYelp();
-            }
-        });
-
-        mOpenInMapsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
-                openInMaps();
-            }
-        });
-
-        mOpenWebsiteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                //Toast.makeText(FoodDecisionActivity.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
-                openWebsite();
-            }
-        });
-
-        mFiltersButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent i = FoodFiltersActivity.newIntent(FoodDecisionActivity.this);
-                i.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
-                //startActivity(i);
-                startActivityForResult(i,0);
-            }
-        });
-
-
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                showSaveDialogue();
-                //Toast.makeText(FoodDecisionActivity.this, "Would open dialogue to save current settings", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mLoadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(FoodDecisionActivity.this, v);
-                popupMenu.setOnMenuItemClickListener(FoodDecisionActivity.this);
-                popupMenu.getMenu().add("Option1");
-                popupMenu.getMenu().add("Option2");
-                popupMenu.getMenu().add("Option3");
-                popupMenu.getMenu().add("Option4");
-                popupMenu.getMenu().add("Option5");
-                popupMenu.getMenu().add("Option6");
-                popupMenu.getMenu().add("Option7");
-                popupMenu.getMenu().add("Option8");
-                popupMenu.getMenu().add("Option9");
-                popupMenu.getMenu().add("Option10");
-                popupMenu.getMenu().add("Option11");
-                popupMenu.getMenu().add("Option12");
-                popupMenu.inflate(R.menu.popup_menu);
-                popupMenu.show();
-            }
-        });
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                // TODO Auto-generated method stub
-                int progressChanged = progress + progressBarMinValue;
-                mDistanceText.setText(getString(R.string.distance, progressChanged));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-        });
-    }
+    //endregion
 
 
     public boolean onMenuItemClick(MenuItem item) {
-        Toast.makeText(FoodDecisionActivity.this, "Would change to saved distance/weight combo, but not in alpha", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Would change to saved distance/weight combo, but not in alpha", Toast.LENGTH_SHORT).show();
         return true;
-    }
-
-    /**
-     * Creates new intent
-     * @param packageContext
-     * @return intent containing activity to be started
-     */
-    public static Intent newIntent(Context packageContext)
-    {
-        Intent i = new Intent(packageContext, FoodDecisionActivity.class);
-        return i;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == 0 && resultCode == RESULT_OK){
-            mFiltersArray = data.getIntegerArrayListExtra(FILTERS_KEY);
-        }
     }
 }

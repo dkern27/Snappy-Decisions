@@ -2,58 +2,42 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="csci448.appigators.snappydecisions">
 
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 	<application
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
-		<activity android:name=".StartActivity"
-			android:theme="@style/AppTheme.NoActionBar"
-			android:configChanges="orientation"
-			android:screenOrientation="portrait">
+		<activity
+			android:name=".BaseActivity"
+			android:label="@string/app_name"
+			android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
+
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".RandomDecisionActivity"
-			android:label="@string/random_decision"
-			android:parentActivityName=".StartActivity"
+		<activity
+			android:name=".FoodFiltersActivity"
 			android:configChanges="orientation"
-			android:screenOrientation="portrait">
-		</activity>
-		<activity android:name=".FoodDecisionActivity"
 			android:label="@string/food_near_me"
-			android:parentActivityName=".StartActivity"
+			android:parentActivityName=".BaseActivity"
+			android:screenOrientation="portrait"></activity>
+		<activity
+			android:name=".ProductInfoActivity"
 			android:configChanges="orientation"
-			android:screenOrientation="portrait"
-			android:launchMode="singleTop">
-		</activity>
-		<activity android:name=".ProductDecisionActivity"
 			android:label="@string/product_decision"
-			android:parentActivityName=".StartActivity"
-			android:configChanges="orientation"
-			android:screenOrientation="portrait">
-		</activity>
-		<activity android:name=".FoodFiltersActivity"
-			android:label="@string/food_near_me"
-			android:parentActivityName=".FoodDecisionActivity"
-			android:configChanges="orientation"
-			android:screenOrientation="portrait">
-		</activity>
-		<activity android:name=".ProductInfoActivity"
-			android:label="@string/product_decision"
-			android:parentActivityName=".ProductDecisionActivity"
-			android:configChanges="orientation"
-			android:screenOrientation="portrait">
-		</activity>
+			android:parentActivityName=".BaseActivity"
+			android:screenOrientation="portrait"></activity>
+
 		<meta-data
 			android:name="io.fabric.ApiKey"
 			android:value="13fb58c44348a16b693a6072e11011434413cfa3" />
 	</application>
-
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

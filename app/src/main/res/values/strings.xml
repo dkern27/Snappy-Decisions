@@ -29,5 +29,9 @@
 	<string name="your_options">Your Options</string>
 	<string name="open_in_maps_button">Map It!</string>
 	<string name="website_button">Yelp</string>
+	<string name="title_activity_base">BaseActivity</string>
+	<string name="title_random">Random</string>
+	<string name="title_food">Food</string>
+	<string name="title_product">Product</string>
 
 </resources>

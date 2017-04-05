@@ -3,15 +3,16 @@ package csci448.appigators.snappydecisions;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,7 +39,7 @@ import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomD
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class RandomDecisionActivity extends NavigationDrawerActivity
+public class RandomDecisionFragment extends Fragment
 {
     RelativeLayout mParentLayout;
     ImageButton mAddButton;
@@ -49,50 +51,42 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
     Button mLoadButton;
     Button mMakeDecisionButton;
     TextView mDecisionText;
+    ImageView mLogo;
+
     ArrayList<EditText> mWeightFields = new ArrayList<>();
 
     ArrayList<RandomDecisionOption> mOptions = new ArrayList<>();
 
     private SQLiteDatabase mDatabase;
 
-    //region Static Methods
-    /**
-     * Creates new intent
-     * @param packageContext
-     * @return intent containing activity to be started
-     */
-    public static Intent newIntent(Context packageContext)
-    {
-        Intent i = new Intent(packageContext, RandomDecisionActivity.class);
-        return i;
-    }
-
-    //endregion
-
     /**
      * Sets up listeners on various buttons
      * @param savedInstanceState holds saved variables
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_random_decision);
-        super.onCreateDrawer();
-
-        Context context = getApplicationContext();
+        Context context = getContext();
         mDatabase = new SnappyDecisionsBaseHelper(context).getWritableDatabase();
+    }
 
-        mParentLayout = (RelativeLayout)findViewById(R.id.activity_normal_decision);
-        mWeightsCheckbox = (CheckBox)findViewById(R.id.weights_checkbox);
-        mAddButton = (ImageButton)findViewById(R.id.add_button);
-        mNewDecisionText = (EditText)findViewById(R.id.new_decision_text);
-        mNewDecisionWeightText = (EditText)findViewById(R.id.weight_text);
-        mDecisionListLinearLayout = (LinearLayout) findViewById(R.id.decision_list_linear_layout);
-        mSaveButton = (Button)findViewById(R.id.save_button);
-        mLoadButton = (Button)findViewById(R.id.load_button);
-        mDecisionText = (TextView)findViewById(R.id.decision_chosen_text);
-        mMakeDecisionButton = (Button)findViewById(R.id.make_decision_button);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        View v = inflater.inflate(R.layout.fragment_random_decision, container, false);
+
+        mParentLayout = (RelativeLayout)v.findViewById(R.id.activity_normal_decision);
+        mWeightsCheckbox = (CheckBox)v.findViewById(R.id.weights_checkbox);
+        mAddButton = (ImageButton)v.findViewById(R.id.add_button);
+        mNewDecisionText = (EditText)v.findViewById(R.id.new_decision_text);
+        mNewDecisionWeightText = (EditText)v.findViewById(R.id.weight_text);
+        mDecisionListLinearLayout = (LinearLayout)v.findViewById(R.id.decision_list_linear_layout);
+        mSaveButton = (Button)v.findViewById(R.id.save_button);
+        mLoadButton = (Button)v.findViewById(R.id.load_button);
+        mDecisionText = (TextView)v.findViewById(R.id.decision_chosen_text);
+        mMakeDecisionButton = (Button)v.findViewById(R.id.make_decision_button);
+        mLogo = (ImageView)v.findViewById(R.id.logo);
 
         mWeightsCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -146,6 +140,8 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
                 makeDecision();
             }
         });
+
+        return v;
     }
 
     //region Save and Load
@@ -156,10 +152,10 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
      * Checks if name is valid and saves to database
      */
     private void showSaveDialogue(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Save Decision as");
 
-        final EditText input = new EditText(this);
+        final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
@@ -170,7 +166,7 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
                 String name = input.getText().toString();
                 if (name.equals(""))
                 {
-                    Toast.makeText(RandomDecisionActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(checkUniqueName(name))
@@ -180,7 +176,7 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
                 else
                 {
                     //Could also ask if want to overwrite but that's harder
-                    Toast.makeText(RandomDecisionActivity.this, "Name must be unique", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Name must be unique", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -201,13 +197,13 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
      */
     private void showLoadDialogue(View v)
     {
-        PopupMenu loadMenu = new PopupMenu(RandomDecisionActivity.this, v);
+        PopupMenu loadMenu = new PopupMenu(getContext(), v);
 
         ArrayList<String> names = getDecisionNames();
 
         if(names.isEmpty())
         {
-            Toast.makeText(this, "No decisions to load", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No decisions to load", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -247,21 +243,23 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
             weight = "1";
         }
 
-        final LinearLayout ll = new LinearLayout(RandomDecisionActivity.this);
+        mLogo.setVisibility(GONE);
+
+        final LinearLayout ll = new LinearLayout(getContext());
         ll.setOrientation(LinearLayout.HORIZONTAL);
 
-        ImageButton removeButton = new ImageButton(RandomDecisionActivity.this);
+        ImageButton removeButton = new ImageButton(getContext());
         removeButton.setImageResource(R.drawable.remove);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
         removeButton.setPadding(35,0,35,0);
         ll.addView(removeButton);
 
-        final EditText decision_et = new EditText(RandomDecisionActivity.this);
+        final EditText decision_et = new EditText(getContext());
         decision_et.setText(option);
         LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
         ll.addView(decision_et, lp2);
 
-        final EditText weight_et = new EditText(RandomDecisionActivity.this);
+        final EditText weight_et = new EditText(getContext());
         weight_et.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(1);
@@ -288,6 +286,10 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
             {
                 mDecisionListLinearLayout.removeView(ll);
                 mOptions.remove(opt);
+                if(mOptions.isEmpty())
+                {
+                    mLogo.setVisibility(VISIBLE);
+                }
             }
         });
 
@@ -382,7 +384,7 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
         }
         else
         {
-            Toast.makeText(RandomDecisionActivity.this, "No decisions to choose from!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No decisions to choose from!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -390,7 +392,7 @@ public class RandomDecisionActivity extends NavigationDrawerActivity
 
     private void showEmptyTextToast()
     {
-        Toast.makeText(RandomDecisionActivity.this, "Option cannot be blank", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Option cannot be blank", Toast.LENGTH_SHORT).show();
 
     }
 
