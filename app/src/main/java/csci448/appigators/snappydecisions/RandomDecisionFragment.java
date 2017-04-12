@@ -530,6 +530,7 @@ public class RandomDecisionFragment extends Fragment
         mOptions.clear();
         mWeightFields.clear();
         mDecisionListLinearLayout.removeAllViews();
+        mDecisionListLinearLayout.addView(mLogo);
         try
         {
             cursor.moveToFirst();

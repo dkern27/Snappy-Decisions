@@ -23,21 +23,28 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:name=".HelpActivity"
+			android:configChanges="orientation"
+			android:label="@string/help"
+			android:parentActivityName=".BaseActivity"
+			android:screenOrientation="portrait" />
+		<activity
 			android:name=".FoodFiltersActivity"
 			android:configChanges="orientation"
 			android:label="@string/food_near_me"
 			android:parentActivityName=".BaseActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait" />
 		<activity
 			android:name=".ProductInfoActivity"
 			android:configChanges="orientation"
 			android:label="@string/product_decision"
 			android:parentActivityName=".BaseActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait" />
 
 		<meta-data
 			android:name="io.fabric.ApiKey"
 			android:value="13fb58c44348a16b693a6072e11011434413cfa3" />
+
 	</application>
 
 </manifest>
