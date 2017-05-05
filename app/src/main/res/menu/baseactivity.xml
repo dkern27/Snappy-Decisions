@@ -3,10 +3,13 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	tools:context=".BaseActivity">
-	
+
+	<item android:id="@+id/action_clear"
+		  android:title="CLEAR"
+		  app:showAsAction="ifRoom"/>
+
 	<item android:id="@+id/action_help"
 		android:icon="@drawable/ic_help_black"
 		android:title="@string/help"
 		app:showAsAction="ifRoom"/>
-
 </menu>

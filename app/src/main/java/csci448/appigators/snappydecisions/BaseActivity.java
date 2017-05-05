@@ -80,6 +80,15 @@ public class BaseActivity extends AppCompatActivity
                 Intent i = HelpActivity.newIntent(this);
                 startActivity(i);
                 return true;
+            case R.id.action_clear:
+
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.detach(fragment);
+                transaction.attach(fragment);
+                transaction.commit();
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
