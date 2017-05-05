@@ -17,7 +17,7 @@ import java.util.Collections;
 
 public class FoodFiltersActivity extends AppCompatActivity
 {
-    public enum Filter{AMERICAN, ASIAN, MEXICAN, $, $$, $$$, $$$$};
+    public enum Filter{AMERICAN, ASIAN, MEXICAN, $, $$, $$$, $$$$}
 
     CheckBox mAmericanFilter;
     CheckBox mAsianFilter;

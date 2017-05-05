@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ public class ProductDecisionFragment extends Fragment
     private EditText mAddProductText;
     private LinearLayout mProductList;
     private ArrayList<Product> mProducts;
+    private Uri mUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,12 +78,13 @@ public class ProductDecisionFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                Uri uri = Uri.parse("https://www.amazon.com/s/" +
+                mUri = Uri.parse("https://www.amazon.com/s/" +
                         "ref=nb_sb_noss?" +
                         "url=search-alias%3Daps&" +
                         "field-keywords=" +
                         convertToUTF8(productName));
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                Intent intent = ProductInfoActivity.newIntent(getContext());
+                intent.setData(mUri);
                 startActivity(intent);
 //                Intent i = ProductInfoActivity.newIntent(ProductDecisionFragment.this);
 //                startActivity(i);
