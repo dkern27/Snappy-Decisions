@@ -69,7 +69,8 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
 
         addressPlusName = "";
         websiteUrl = "";
-        connectToYelp();
+        //connectToYelp();
+        new ConnectTask().execute(0);
     }
 
     @Override
@@ -437,6 +438,19 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
         @Override
         protected void onPostExecute(Void result) {
             pickBusiness(busineses);
+        }
+    }
+
+    private class ConnectTask extends AsyncTask<Integer,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            connectToYelp();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+
         }
     }
 }
