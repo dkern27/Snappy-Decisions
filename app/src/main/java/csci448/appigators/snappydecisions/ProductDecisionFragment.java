@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -48,8 +49,13 @@ public class ProductDecisionFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                addNewProduct();
-                clearNewFields();
+                // only update if user has put text
+                if (!mAddProductText.getText().toString().equals("")) {
+                    addNewProduct();
+                    clearNewFields();
+                } else {
+                    Toast.makeText(getActivity(), "Enter a search term", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
