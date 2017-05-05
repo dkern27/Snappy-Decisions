@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -78,7 +79,7 @@ public class ProductDecisionFragment extends Fragment
         ImageButton removeButton = new ImageButton(getContext());
         removeButton.setImageResource(R.drawable.remove);
         removeButton.setBackgroundColor(Color.TRANSPARENT);
-        removeButton.setPadding(35, 0, 35, 0);
+        removeButton.setPadding(35, 15, 35, 0);
 
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +87,7 @@ public class ProductDecisionFragment extends Fragment
                 mProductList.removeView(productLayout);
             }
         });
-        
+
         productLayout.addView(removeButton);
 
         final String productName = mAddProductText.getText().toString();
