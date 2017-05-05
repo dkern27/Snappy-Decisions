@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -30,6 +32,14 @@ public class ProductInfoActivity extends AppCompatActivity {
         mWebView = (WebView)findViewById(R.id.product_web_view);
 
         mUri = getIntent().getData();
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
+
         mWebView.loadUrl(mUri.toString());
     }
 
