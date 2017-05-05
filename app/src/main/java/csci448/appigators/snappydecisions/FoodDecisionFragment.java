@@ -2,7 +2,9 @@ package csci448.appigators.snappydecisions;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -91,7 +93,8 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
             public void onClick(View v)
             {
                 //Toast.makeText(FoodDecisionFragment.this, "Would open up maps, drop a pin based on distance and filters", Toast.LENGTH_SHORT).show();
-                searchYelp();
+                //searchYelp();
+                initiateSearch();
             }
         });
 
@@ -214,8 +217,20 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
         }
     }
 
-    void searchYelp(){
+    void initiateSearch() {
+        mDecisionText.setText("Loading...");
+        mChoicesText.setText("");
+        addressPlusName = "";
+        websiteUrl = "";
+
+        new SearchTask().execute(0);
+    }
+
+    ArrayList<Business> searchYelp(){
+
         Map<String, String> params = new HashMap<>();
+
+        ArrayList<Business> businesses = new ArrayList<>();
 
         params.put("term", "restaurants");
 
@@ -294,7 +309,7 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
 
             Call<SearchResponse> call = yelpFusionApi.getBusinessSearch(params);
             SearchResponse searchResponse = call.execute().body();
-            ArrayList<Business> businesses = searchResponse.getBusinesses();
+            businesses = searchResponse.getBusinesses();
             //String businessName = businesses.get(0).getName();
             //Toast.makeText(FoodDecisionFragment.this, "Number of businesses: " + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
 
@@ -314,7 +329,7 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
                 businesses.remove(index);
             }
             //
-
+            /*
             if (businesses.size() > 0){
                 Random rand = new Random();
                 int choice = rand.nextInt(businesses.size());
@@ -328,10 +343,30 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
                 mChoicesText.setText("");
                 addressPlusName = "";
                 websiteUrl = "";
-            }
+            }*/
+            return businesses;
 
         }catch(java.io.IOException e) {
             e.printStackTrace();
+        }
+
+        return businesses;
+    }
+
+    void pickBusiness( ArrayList<Business> businesses ) {
+        if (businesses.size() > 0){
+            Random rand = new Random();
+            int choice = rand.nextInt(businesses.size());
+            //Toast.makeText(FoodDecisionFragment.this, businesses.get(choice).getName() + Integer.toString(businesses.size()), Toast.LENGTH_SHORT).show();
+            mDecisionText.setText(businesses.get(choice).getName());
+            mChoicesText.setText("Chosen From " + Integer.toString(businesses.size()) + " businesses.");
+            addressPlusName = businesses.get(choice).getLocation().getAddress1() + " " + businesses.get(choice).getName();
+            websiteUrl = businesses.get(choice).getUrl();//yelp website
+        }else{
+            mDecisionText.setText("");
+            mChoicesText.setText("");
+            addressPlusName = "";
+            websiteUrl = "";
         }
     }
 
@@ -388,5 +423,20 @@ public class FoodDecisionFragment extends Fragment implements PopupMenu.OnMenuIt
     public boolean onMenuItemClick(MenuItem item) {
         Toast.makeText(getActivity(), "Would change to saved distance/weight combo, but not in alpha", Toast.LENGTH_SHORT).show();
         return true;
+    }
+
+    private class SearchTask extends AsyncTask<Integer,Void,Void> {
+
+        ArrayList<Business> busineses;
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            busineses = searchYelp();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            pickBusiness(busineses);
+        }
     }
 }
