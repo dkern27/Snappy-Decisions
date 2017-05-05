@@ -2,6 +2,7 @@ package csci448.appigators.snappydecisions;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
@@ -63,11 +65,7 @@ public class ProductDecisionFragment extends Fragment
     }
 
     private void addNewProduct() {
-        final String productName = mAddProductText.getText().toString();
-        EditText textView = new EditText(getContext());
-        textView.setText(productName);
-
-        LinearLayout productLayout = new LinearLayout(getContext());
+        final LinearLayout productLayout = new LinearLayout(getContext());
         productLayout.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 3);
@@ -76,6 +74,25 @@ public class ProductDecisionFragment extends Fragment
         int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
                 r.getDisplayMetrics());
         params.setMargins(0, 0, px, px);
+
+        ImageButton removeButton = new ImageButton(getContext());
+        removeButton.setImageResource(R.drawable.remove);
+        removeButton.setBackgroundColor(Color.TRANSPARENT);
+        removeButton.setPadding(35, 0, 35, 0);
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mProductList.removeView(productLayout);
+            }
+        });
+        
+        productLayout.addView(removeButton);
+
+        final String productName = mAddProductText.getText().toString();
+        EditText textView = new EditText(getContext());
+        textView.setText(productName);
+        textView.setKeyListener(null);
         productLayout.addView(textView, params);
 
         ImageButton imageButton = new ImageButton(getContext());
@@ -92,8 +109,6 @@ public class ProductDecisionFragment extends Fragment
                 Intent intent = ProductInfoActivity.newIntent(getContext());
                 intent.setData(mUri);
                 startActivity(intent);
-//                Intent i = ProductInfoActivity.newIntent(ProductDecisionFragment.this);
-//                startActivity(i);
             }
         });
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
