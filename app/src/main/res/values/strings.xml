@@ -41,5 +41,6 @@
 		To use weights, select the Use Weights checkbox. Weights specify how likely the option will be chosen relative to the other options.\n
 		Example: If option 1 has a weight of 5 and option 2 has a weight of 3, then option 1 will be chosen 5/8 of the time, and option 2 will be chosen 3/8 of the time.
 	</string>
+	<string name="Loading">Loading...</string>
 
 </resources>
