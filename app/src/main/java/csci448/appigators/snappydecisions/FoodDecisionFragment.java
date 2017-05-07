@@ -1,8 +1,11 @@
 package csci448.appigators.snappydecisions;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,6 +44,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import csci448.appigators.snappydecisions.database.SnappyDecisionsBaseHelper;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsCursorWrapper;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema;
 import retrofit2.Call;
 
 import static android.app.Activity.RESULT_OK;
@@ -74,11 +80,14 @@ public class FoodDecisionFragment extends Fragment
 
     private int NUM_FILTERS = FoodFiltersActivity.Filter.values().length;
     private ArrayList<Integer> mFiltersArray = new ArrayList<>(Collections.nCopies(NUM_FILTERS, 0));
+    private int mRadius;
+    private SQLiteDatabase mDatabase;
 
     //region Overridden methods
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDatabase = new SnappyDecisionsBaseHelper(getContext()).getWritableDatabase();
 
         checkPermission();
 
@@ -115,6 +124,7 @@ public class FoodDecisionFragment extends Fragment
         mSeekBar = (SeekBar)v.findViewById(R.id.seekBar);
         mDistanceText = (TextView)v.findViewById(R.id.distance_text);
         mDistanceText.setText(getString(R.string.distance, mSeekBar.getProgress() + PROGRESS_BAR_MIN_VALUE));
+        mRadius = mSeekBar.getProgress() + PROGRESS_BAR_MIN_VALUE;
         mMakeDecisionButton = (Button)v.findViewById(R.id.make_decision_button);
         mOpenInMapsButton = (Button)v.findViewById(R.id.open_in_maps_button);
         mOpenWebsiteButton = (Button)v.findViewById(R.id.website_button);
@@ -179,6 +189,7 @@ public class FoodDecisionFragment extends Fragment
                                           boolean fromUser) {
                 int progressChanged = progress + PROGRESS_BAR_MIN_VALUE;
                 mDistanceText.setText(getString(R.string.distance, progressChanged));
+                mRadius = progressChanged;
             }
 
             @Override
@@ -248,7 +259,21 @@ public class FoodDecisionFragment extends Fragment
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getActivity(), "Would save current settings and add as an option in the load popup, but not in alpha", Toast.LENGTH_SHORT).show();
+                String name = input.getText().toString();
+                if (name.equals(""))
+                {
+                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(checkUniqueName(name))
+                {
+                    saveToDatabase(name);
+                }
+                else
+                {
+                    //Could also ask if want to overwrite but that's harder
+                    Toast.makeText(getActivity(), "Name must be unique", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -262,28 +287,32 @@ public class FoodDecisionFragment extends Fragment
 
     private void showLoadDialogue(View v)
     {
-        PopupMenu popupMenu = new PopupMenu(getContext(), v);
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        PopupMenu loadMenu = new PopupMenu(getContext(), v);
+
+        ArrayList<String> names = getDecisionNames();
+
+        if(names.isEmpty())
+        {
+            Toast.makeText(getActivity(), "No decisions to load", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        for (String s : names)
+        {
+            loadMenu.getMenu().add(s);
+        }
+        loadMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item)
             {
-                return false;
+                String name = item.getTitle().toString();
+                loadOptions(name);
+                return true;
             }
         });
-        popupMenu.getMenu().add("Option1");
-        popupMenu.getMenu().add("Option2");
-        popupMenu.getMenu().add("Option3");
-        popupMenu.getMenu().add("Option4");
-        popupMenu.getMenu().add("Option5");
-        popupMenu.getMenu().add("Option6");
-        popupMenu.getMenu().add("Option7");
-        popupMenu.getMenu().add("Option8");
-        popupMenu.getMenu().add("Option9");
-        popupMenu.getMenu().add("Option10");
-        popupMenu.getMenu().add("Option11");
-        popupMenu.getMenu().add("Option12");
-        popupMenu.inflate(R.menu.popup_menu);
-        popupMenu.show();
+
+        loadMenu.inflate(R.menu.popup_menu);
+        loadMenu.show();
     }
 
     //endregion
@@ -525,6 +554,126 @@ public class FoodDecisionFragment extends Fragment
         @Override
         protected void onPostExecute(Void result) {
 
+        }
+    }
+
+    //endregion
+
+    //region Database Stuff
+
+    /**
+     * Runs through cursor to get names of all food saved names
+     * @return list of strings
+     */
+    private ArrayList<String> getDecisionNames()
+    {
+        SnappyDecisionsCursorWrapper cursor = queryTable(SnappyDecisionsSchema.FoodDecisionTable.NAME, null, null);
+        ArrayList<String> allNames = new ArrayList<>();
+        try
+        {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                allNames.add(cursor.getFoodDecisionName());
+                cursor.moveToNext();
+            }
+        }
+        finally
+        {
+            cursor.close();
+        }
+        return allNames;
+    }
+
+    /**
+     * Checks if the name is already in the database
+     * @param name name trying to be saved
+     * @return true if name is not in database already
+     */
+    private boolean checkUniqueName(String name)
+    {
+        ArrayList<String> allNames = getDecisionNames();
+
+        if(allNames.contains(name))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Generic query builder
+     * @param dbName name of table
+     * @param whereClause where clause string
+     * @param whereArgs args for whereClause
+     * @return retur cursor in database
+     */
+    private SnappyDecisionsCursorWrapper queryTable(String dbName, String whereClause, String[] whereArgs)
+    {
+        Cursor cursor = mDatabase.query(dbName,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        return new SnappyDecisionsCursorWrapper(cursor);
+    }
+
+    /**
+     * Content values for Food Filters/radius
+     * @param name name to associate with decision
+     * @return ContentValues with name in it
+     */
+    private ContentValues getFoodContentValues(String name)
+    {
+        ContentValues values = new ContentValues();
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME, name);
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.RADIUS, mRadius);
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.AMERICAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.ASIAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.MEXICAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$$.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$$$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$$$.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$$$$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$$$$.ordinal()));
+        return values;
+    }
+
+    /**
+     * Saves decision and options to database
+     * @param name primary key of RandomDecisionTable
+     */
+    private void saveToDatabase(String name)
+    {
+        ContentValues foodValues = getFoodContentValues(name);
+        mDatabase.insert(SnappyDecisionsSchema.FoodDecisionTable.NAME, null, foodValues);
+    }
+
+    /**
+     * Loads options for a given decision
+     * @param name Name of decision for the options
+     */
+    private void loadOptions(String name)
+    {
+        SnappyDecisionsCursorWrapper cursor = queryTable(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
+        //clear stuff
+        //set logo back
+        try
+        {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast())
+            {
+                mRadius = cursor.getFoodDecisionRadius();
+                mSeekBar.setProgress(mRadius - PROGRESS_BAR_MIN_VALUE);
+                mFiltersArray = cursor.getFoodDecisionFilters();
+                cursor.moveToNext();
+            }
+        }
+        finally
+        {
+            cursor.close();
         }
     }
 
