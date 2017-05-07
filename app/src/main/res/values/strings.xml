@@ -47,6 +47,7 @@
 		Enter the name of a product or general item you want to search for.\n
 		Once the product has been entered, clicking the arrow next to it will open a screen that allows you to choose which website\'s results to look at.\n
 		The websites are Amazon, Newegg, and eBay. You can compare results from the various sites by navigating to each of them in turn.\n
+		Once on the website, hitting the back button will move back through your browsing history. Hitting the up button in the upper left corner of the screen will take you back to the website selection screen.
 	</string>
 	<string name="help_food_text">
 		Choose a radius in miles you would look to look for restaurants for.\n

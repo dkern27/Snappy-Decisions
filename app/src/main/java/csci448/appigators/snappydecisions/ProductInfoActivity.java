@@ -56,11 +56,7 @@ public class ProductInfoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mWebView.canGoBack()) {
-                    mWebView.goBack();
-                } else {
-                    finish();
-                }
+                finish();
                 break;
         }
         return true;

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 
@@ -81,19 +82,18 @@ public class ProductWebsitesActivity extends AppCompatActivity {
         String websiteName = "";
         switch(website) {
             case AMAZON:
-                websiteName = "Amazon";
+                websiteName = "amazon";
                 break;
             case NEWEGG:
-                websiteName = "Newegg";
+                websiteName = "newegg";
                 break;
             case EBAY:
-                websiteName = "Ebay";
+                websiteName = "ebay";
                 break;
         }
 
-        EditText textView = new EditText(this.getApplicationContext());
+        TextView textView = new TextView(this.getApplicationContext());
         textView.setText(websiteName);
-        textView.setKeyListener(null);
         mWebsiteLayout.addView(textView, params);
 
         ImageButton imageButton = new ImageButton(this.getApplicationContext());
