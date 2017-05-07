@@ -82,13 +82,13 @@ public class ProductWebsitesActivity extends AppCompatActivity {
         String websiteName = "";
         switch(website) {
             case AMAZON:
-                websiteName = "Amazon";
+                websiteName = "amazon";
                 break;
             case NEWEGG:
-                websiteName = "Newegg";
+                websiteName = "newegg";
                 break;
             case EBAY:
-                websiteName = "Ebay";
+                websiteName = "ebay";
                 break;
         }
 
