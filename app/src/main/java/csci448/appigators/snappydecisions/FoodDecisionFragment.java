@@ -13,12 +13,14 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,6 +248,14 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    public void resetRadiusAndFilters(){
+        for(int i = 0; i < mFiltersArray.size(); i++){
+            mFiltersArray.set(i,0);
+        }
+        mRadius = 5;
+        mSeekBar.setProgress(mRadius - PROGRESS_BAR_MIN_VALUE);
+    }
+
     //region Save/Load
 
     private void showSaveDialogue(){
@@ -293,7 +303,7 @@ public class FoodDecisionFragment extends Fragment
 
         if(names.isEmpty())
         {
-            Toast.makeText(getActivity(), "No decisions to load", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No saved settings", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -305,8 +315,23 @@ public class FoodDecisionFragment extends Fragment
             @Override
             public boolean onMenuItemClick(MenuItem item)
             {
-                String name = item.getTitle().toString();
-                loadOptions(name);
+                final String name = item.getTitle().toString();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Load or Delete Entry?");
+
+                builder.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        loadOptions(name);
+                    }
+                });
+                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteOptions(name);
+                    }
+                });
+                builder.show();
                 return true;
             }
         });
@@ -675,6 +700,10 @@ public class FoodDecisionFragment extends Fragment
         {
             cursor.close();
         }
+    }
+
+    private void deleteOptions(String name){
+        mDatabase.delete(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
     }
 
     //endregion
