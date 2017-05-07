@@ -42,6 +42,6 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/product_list_linear_layout">
 		</LinearLayout>
-		</ScrollView>
+	</ScrollView>
 
 </RelativeLayout>
