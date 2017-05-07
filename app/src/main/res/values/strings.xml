@@ -50,7 +50,7 @@
 		Once on the website, hitting the back button will move back through your browsing history. Hitting the up button in the upper left corner of the screen will take you back to the website selection screen.
 	</string>
 	<string name="help_food_text">
-		Choose a radius in miles you would look to look for restaurants for using the slider at the top.\n
+		Choose a radius in miles you would look to look for restaurants for using the slider at the top. Note that this is linear distance so the actual travelling distance might increase depending on what roads take you there.\n
 		Press the filters button and check filters you would like applied to the search (food category and price).\n
 		Make decision will choose a random restaurant based on your radius and currently applied filters.\n
 		The clear button on the toolbar will reset the radius and filters to their default settings.\n
