@@ -361,7 +361,7 @@ public class FoodDecisionFragment extends Fragment
     }
 
     private void initiateSearch() {
-        mLogo.setVisibility(View.GONE);
+        //mLogo.setVisibility(View.GONE);
         mDecisionText.setText(R.string.Loading);
         mChoicesText.setText("");
         addressPlusName = "";
@@ -685,6 +685,7 @@ public class FoodDecisionFragment extends Fragment
         SnappyDecisionsCursorWrapper cursor = queryTable(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
         //clear stuff
         //set logo back
+        //mLogo.setVisibility(View.VISIBLE);
         try
         {
             cursor.moveToFirst();
