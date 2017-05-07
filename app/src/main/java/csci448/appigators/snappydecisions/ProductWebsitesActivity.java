@@ -125,12 +125,10 @@ public class ProductWebsitesActivity extends AppCompatActivity {
                         convertToUTF8(mProductName));
                 break;
             case NEWEGG:
-                uri = Uri.parse("https://www.newegg.com/" +
-                        "Product/ProductList.aspx?Submit=ENE" +
-                        "&DEPA=0&Order=BESTMATCH" +
-                        "&Description=" +
-                        convertToUTF8(mProductName) +
-                        "&N=-1&isNodeId=1");
+                uri = Uri.parse("https://m.newegg.com/" +
+                        "ProductList?" +
+                        "keyword=" +
+                        convertToUTF8(mProductName));
                 break;
             case EBAY:
                 uri = Uri.parse("http://www.ebay.com/sch/i.html?_from=R40&" +
