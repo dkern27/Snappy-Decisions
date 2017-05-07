@@ -118,10 +118,9 @@ public class ProductWebsitesActivity extends AppCompatActivity {
         Uri uri;
         switch(website) {
             case AMAZON:
-                uri = Uri.parse("https://www.amazon.com/s/" +
-                        "ref=nb_sb_noss?" +
-                        "url=search-alias%3Daps&" +
-                        "field-keywords=" +
+                uri = Uri.parse("https://www.amazon.com/gp/aw/s/" +
+                        "ref=is_s?" +
+                        "k=" +
                         convertToUTF8(mProductName));
                 break;
             case NEWEGG:
@@ -131,10 +130,10 @@ public class ProductWebsitesActivity extends AppCompatActivity {
                         convertToUTF8(mProductName));
                 break;
             case EBAY:
-                uri = Uri.parse("http://www.ebay.com/sch/i.html?_from=R40&" +
+                uri = Uri.parse("http://m.ebay.com/sch/i.html?" +
                         "_nkw=" +
                         convertToUTF8(mProductName) +
-                        "&_sacat=0");
+                        "&isRefine=true");
                 break;
             default:
                 uri = Uri.EMPTY;
