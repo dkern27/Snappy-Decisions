@@ -3,11 +3,13 @@ package csci448.appigators.snappydecisions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,6 +43,11 @@ public class ProductInfoActivity extends AppCompatActivity {
                 return false;
             }
         });
+        if (Build.VERSION.SDK_INT >= 19) {
+            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else {
+            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
 
         mWebView.loadUrl(mUri.toString());
     }
@@ -81,8 +88,9 @@ public class ProductInfoActivity extends AppCompatActivity {
      * @param packageContext
      * @return intent containing activity to be started
      */
-    public static Intent newIntent(Context packageContext) {
+    public static Intent newIntent(Context packageContext, Uri uri) {
         Intent i = new Intent(packageContext, ProductInfoActivity.class);
+        i.setData(uri);
         return i;
     }
 }

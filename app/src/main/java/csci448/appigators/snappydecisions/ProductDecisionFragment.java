@@ -22,13 +22,11 @@ import android.widget.Toast;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-public class ProductDecisionFragment extends Fragment
-{
+public class ProductDecisionFragment extends Fragment {
 
     private ImageButton mAddProductButton;
     private EditText mAddProductText;
     private LinearLayout mProductList;
-    private ArrayList<Product> mProducts;
     private Uri mUri;
 
     @Override
@@ -102,13 +100,7 @@ public class ProductDecisionFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                mUri = Uri.parse("https://www.amazon.com/s/" +
-                        "ref=nb_sb_noss?" +
-                        "url=search-alias%3Daps&" +
-                        "field-keywords=" +
-                        convertToUTF8(productName));
-                Intent intent = ProductInfoActivity.newIntent(getContext());
-                intent.setData(mUri);
+                Intent intent = ProductWebsitesActivity.newIntent(getContext(), productName);
                 startActivity(intent);
             }
         });
@@ -121,15 +113,5 @@ public class ProductDecisionFragment extends Fragment
 
     private void clearNewFields() {
         mAddProductText.setText("");
-    }
-
-    public String convertToUTF8(String s) {
-        String utf8Encoded = null;
-        try {
-            utf8Encoded = new String(s.getBytes("UTF-8"), "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
-        return utf8Encoded;
     }
 }

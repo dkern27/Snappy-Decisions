@@ -40,6 +40,12 @@
 			android:label="@string/product_decision"
 			android:parentActivityName=".BaseActivity"
 			android:screenOrientation="portrait" />
+		<activity
+			android:name=".ProductWebsitesActivity"
+			android:configChanges="orientation"
+			android:label="@string/product_decision"
+			android:parentActivityName=".ProductInfoActivity"
+			android:screenOrientation="portrait" />
 
 		<meta-data
 			android:name="io.fabric.ApiKey"
