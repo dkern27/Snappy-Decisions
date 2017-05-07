@@ -13,7 +13,6 @@
 	<string name="enter_product_hint">Enter product name...</string>
 	<string name="make_decision_button">Make Decision</string>
 	<string name="product_rating">Rating:</string>
-	<string name="product_description">Product Description:</string>
 	<string name="distance">Distance: %d miles</string>
 	<string name="filters">Filters</string>
 	<string name="type_string">Type of food:</string>
@@ -42,5 +41,10 @@
 		Example: If option 1 has a weight of 5 and option 2 has a weight of 3, then option 1 will be chosen 5/8 of the time, and option 2 will be chosen 3/8 of the time.
 	</string>
 	<string name="Loading">Loading...</string>
+	<string name="help_product_text">
+		Enter the name of a product or general item you want to search for.\n
+		Once the product has been entered, clicking the arrow next to it will open a screen that allows you to choose which website\'s results to look at.\n
+		The websites are Amazon, Newegg, and eBay. You can compare results from the various sites by navigating to each of them in turn.\n
+	</string>
 
 </resources>

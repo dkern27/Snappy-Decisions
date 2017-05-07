@@ -32,6 +32,24 @@
 				android:layout_weight="1"
 				android:bufferType="spannable"
 				android:text="@string/help_random_text" />
+
+			<TextView
+				android:id="@+id/help_product_header"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/product_decision"
+				android:textSize="18sp"
+				android:textStyle="bold"
+				android:paddingTop="10dp" />
+
+			<TextView
+				android:id="@+id/help_product_description"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:bufferType="spannable"
+				android:text="@string/help_product_text" />
 		</LinearLayout>
 	</ScrollView>
 </LinearLayout>
