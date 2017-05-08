@@ -13,12 +13,14 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,7 +139,12 @@ public class FoodDecisionFragment extends Fragment
             public void onClick(View v)
             {
                 getCurrentLocation();
-                initiateSearch();
+                if(mCurrentLocation != null){
+                    initiateSearch();
+                }else{
+                    Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -246,6 +253,14 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    public void resetRadiusAndFilters(){
+        for(int i = 0; i < mFiltersArray.size(); i++){
+            mFiltersArray.set(i,0);
+        }
+        mRadius = 5;
+        mSeekBar.setProgress(mRadius - PROGRESS_BAR_MIN_VALUE);
+    }
+
     //region Save/Load
 
     private void showSaveDialogue(){
@@ -293,7 +308,7 @@ public class FoodDecisionFragment extends Fragment
 
         if(names.isEmpty())
         {
-            Toast.makeText(getActivity(), "No decisions to load", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No saved settings", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -305,8 +320,23 @@ public class FoodDecisionFragment extends Fragment
             @Override
             public boolean onMenuItemClick(MenuItem item)
             {
-                String name = item.getTitle().toString();
-                loadOptions(name);
+                final String name = item.getTitle().toString();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Load or Delete Entry?");
+
+                builder.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        loadOptions(name);
+                    }
+                });
+                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteOptions(name);
+                    }
+                });
+                builder.show();
                 return true;
             }
         });
@@ -336,7 +366,7 @@ public class FoodDecisionFragment extends Fragment
     }
 
     private void initiateSearch() {
-        mLogo.setVisibility(View.GONE);
+        //mLogo.setVisibility(View.GONE);
         mDecisionText.setText(R.string.Loading);
         mChoicesText.setText("");
         addressPlusName = "";
@@ -345,10 +375,8 @@ public class FoodDecisionFragment extends Fragment
     }
 
     private ArrayList<Business> searchYelp(){
-
-        Map<String, String> params = new HashMap<>();
-
         ArrayList<Business> businesses = new ArrayList<>();
+        Map<String, String> params = new HashMap<>();
 
         params.put("term", "restaurants");
 
@@ -358,71 +386,71 @@ public class FoodDecisionFragment extends Fragment
         //adding food type filters
         ArrayList<String> stringsToAdd = new ArrayList<>();
         String categoriesString = "";
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1) {
             stringsToAdd.add("mexican");
             stringsToAdd.add("newmexican");
         }
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()) == 1) {
             stringsToAdd.add("newamerican");
             stringsToAdd.add("tradamerican");
         }
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()) == 1) {
             stringsToAdd.add("panasian");
             stringsToAdd.add("asianfusion");
         }
 
-        for(int i = 0; i < stringsToAdd.size(); i++){
-            if(i == 0){
+        for (int i = 0; i < stringsToAdd.size(); i++) {
+            if (i == 0) {
                 categoriesString += stringsToAdd.get(i);
-            }else{
+            } else {
                 categoriesString = categoriesString + "," + stringsToAdd.get(i);
             }
         }
 
-        if(!categoriesString.equals("")){
+        if (!categoriesString.equals("")) {
             params.put("categories", categoriesString);
         }
 
         //adding pricing filters
         ArrayList<String> pricingFilters = new ArrayList<>();
         String pricingFilterString = "";
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.$.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$.ordinal()) == 1) {
             pricingFilters.add("1");
         }
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$.ordinal()) == 1) {
             pricingFilters.add("2");
         }
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$.ordinal()) == 1) {
             pricingFilters.add("3");
         }
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$$.ordinal()) == 1){
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.$$$$.ordinal()) == 1) {
             pricingFilters.add("4");
         }
 
-        for(int i = 0; i < pricingFilters.size(); i++){
-            if(i == 0){
+        for (int i = 0; i < pricingFilters.size(); i++) {
+            if (i == 0) {
                 pricingFilterString += pricingFilters.get(i);
-            }else{
+            } else {
                 pricingFilterString = pricingFilterString + "," + pricingFilters.get(i);
             }
         }
 
-        if(!pricingFilterString.equals("")){
+        if (!pricingFilterString.equals("")) {
             params.put("price", pricingFilterString);
         }
 
         params.put("limit", "50");
-        params.put("open_now","true");
+        params.put("open_now", "true");
 
         //radius param isnt perfect, need to also filter results for distance
         //but including the param helps keep the list as large as possible
         int radius = (int) 1609.34 * (mSeekBar.getProgress() + PROGRESS_BAR_MIN_VALUE);
-        if (radius > 40000){
+        if (radius > 40000) {
             radius = 40000;//max value is a little less than 25 miles and over 40k causes error for yelp API
         }
         params.put("radius", Integer.toString(radius));
 
-        try{
+        try {
 
             Call<SearchResponse> call = yelpFusionApi.getBusinessSearch(params);
             SearchResponse searchResponse = call.execute().body();
@@ -432,8 +460,8 @@ public class FoodDecisionFragment extends Fragment
 
             //removing things too far away
             ArrayList<Integer> indicesToRemove = new ArrayList<>();
-            for (int i = 0; i < businesses.size(); i++){
-                if (businesses.get(i).getDistance() > 1609.34 * (mSeekBar.getProgress() + PROGRESS_BAR_MIN_VALUE)){
+            for (int i = 0; i < businesses.size(); i++) {
+                if (businesses.get(i).getDistance() > 1609.34 * (mSeekBar.getProgress() + PROGRESS_BAR_MIN_VALUE)) {
                     indicesToRemove.add(i);
                 }
             }
@@ -441,17 +469,15 @@ public class FoodDecisionFragment extends Fragment
             //work from right to left
             Collections.reverse(indicesToRemove);
 
-            for (int i = 0; i < indicesToRemove.size(); i++)
-            {
+            for (int i = 0; i < indicesToRemove.size(); i++) {
                 int index = indicesToRemove.get(i);
                 businesses.remove(index);
             }
             return businesses;
 
-        }catch(java.io.IOException e) {
+        } catch (java.io.IOException e) {
             e.printStackTrace();
         }
-
         return businesses;
     }
 
@@ -660,6 +686,7 @@ public class FoodDecisionFragment extends Fragment
         SnappyDecisionsCursorWrapper cursor = queryTable(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
         //clear stuff
         //set logo back
+        //mLogo.setVisibility(View.VISIBLE);
         try
         {
             cursor.moveToFirst();
@@ -675,6 +702,10 @@ public class FoodDecisionFragment extends Fragment
         {
             cursor.close();
         }
+    }
+
+    private void deleteOptions(String name){
+        mDatabase.delete(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
     }
 
     //endregion

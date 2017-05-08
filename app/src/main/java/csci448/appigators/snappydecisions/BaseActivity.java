@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -82,6 +83,12 @@ public class BaseActivity extends AppCompatActivity
             case R.id.action_clear:
 
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+                if (fragment instanceof FoodDecisionFragment){
+                    ((FoodDecisionFragment) fragment).resetRadiusAndFilters();
+                    Toast.makeText(this, "Filters and Radius Reset", Toast.LENGTH_SHORT).show();
+                }
+
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.detach(fragment);
                 transaction.attach(fragment);

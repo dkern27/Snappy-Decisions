@@ -4,8 +4,10 @@
 	<string name="random_decision">Random Decision</string>
 	<string name="food_near_me">Food Near Me</string>
 	<string name="product_decision">Product Decision</string>
+	<string name="food_decision">Food Decision</string>
 	<string name="save">Save</string>
 	<string name="load">load</string>
+	<string name="load_delete">load/delete</string>
 	<string name="instructions">Enter your decisions below</string>
 	<string name="use_weights">Use Weights</string>
 	<string name="enter_text_hint">Enter Text...</string>
@@ -38,7 +40,7 @@
 		Press the plus button to add the option to the list.\n
 		Press the minus button to remove the option from the list.\n
 		To use weights, select the Use Weights checkbox. Weights specify how likely the option will be chosen relative to the other options.\n
-		Example: If option 1 has a weight of 5 and option 2 has a weight of 3, then option 1 will be chosen 5/8 of the time, and option 2 will be chosen 3/8 of the time.
+		Example: If option 1 has a weight of 5 and option 2 has a weight of 3, then option 1 will be chosen 5/8 of the time, and option 2 will be chosen 3/8 of the time.\n
 	</string>
 	<string name="Loading">Loading...</string>
 	<string name="help_product_text">
@@ -48,5 +50,14 @@
 		Once on the website, hitting the back button will move back through your browsing history. Hitting the up button in the upper left corner of the screen will take you back to the website selection screen.
 	</string>
 	<string name="add_product">Add Product</string>
+	<string name="help_food_text">
+		Choose a radius in miles you would look to look for restaurants for using the slider at the top. Note that this is linear distance so the actual travelling distance might increase depending on what roads take you there.\n
+		Press the filters button and check filters you would like applied to the search (food category and price).\n
+		Make decision will choose a random restaurant based on your radius and currently applied filters.\n
+		The clear button on the toolbar will reset the radius and filters to their default settings.\n
+		The save button will save your current settings (radius and filters) to a unique name.\n
+		The load/delete button allows you to load saved settings or delete them.\n
+		Map it! and Yelp buttons will take you to google maps and plot your route, or to the restaurants yelp page.\n
+	</string>
 
 </resources>
