@@ -88,16 +88,22 @@ public class ProductDecisionFragment extends Fragment {
         removeButton.setBackgroundColor(Color.TRANSPARENT);
         removeButton.setPadding(35, 15, 35, 0);
 
+        final String productName = mProductName;
+        mProducts.add(productName);
+
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mProductList.removeView(productLayout);
+                mProducts.remove(productName);
+                if (mProducts.isEmpty()) {
+                    mLogo.setVisibility(View.VISIBLE);
+                }
             }
         });
 
         productLayout.addView(removeButton);
 
-        final String productName = mProductName;
         EditText textView = new EditText(getContext());
         textView.setText(productName);
         textView.setKeyListener(null);
