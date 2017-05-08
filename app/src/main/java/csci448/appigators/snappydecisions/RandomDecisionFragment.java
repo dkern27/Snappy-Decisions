@@ -89,6 +89,9 @@ public class RandomDecisionFragment extends Fragment
         mMakeDecisionButton = (Button)v.findViewById(R.id.make_decision_button);
         mLogo = (ImageView)v.findViewById(R.id.logo);
 
+        mOptions.clear();
+        mWeightFields.clear();
+
         mWeightsCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
