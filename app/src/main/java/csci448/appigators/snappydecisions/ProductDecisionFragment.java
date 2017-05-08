@@ -298,6 +298,7 @@ public class ProductDecisionFragment extends Fragment {
     }
 
     private void makeRandomDecisions() {
+        mOptions.clear();
         for (String s : mProducts) {
             RandomDecisionOption option = new RandomDecisionOption(s, 1);
             mOptions.add(option);
