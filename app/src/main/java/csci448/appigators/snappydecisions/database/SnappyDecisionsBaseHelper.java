@@ -20,7 +20,6 @@ public class SnappyDecisionsBaseHelper extends SQLiteOpenHelper
     public SnappyDecisionsBaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, VERSION);
-
     }
 
     @Override
