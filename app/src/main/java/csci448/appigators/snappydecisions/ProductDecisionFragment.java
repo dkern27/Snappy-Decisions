@@ -16,12 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDecisionFragment extends Fragment {
 
@@ -32,7 +34,8 @@ public class ProductDecisionFragment extends Fragment {
     private EditText mAddProductText;
     private String mProductName;
     private LinearLayout mProductList;
-
+    private ImageView mLogo;
+    private List<String> mProducts = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,7 @@ public class ProductDecisionFragment extends Fragment {
 
         mAddProductText = (EditText)v.findViewById(R.id.new_product_text);
         mProductList = (LinearLayout)v.findViewById(R.id.product_list_linear_layout);
+        mLogo = (ImageView)v.findViewById(R.id.logo);
 
         mAddProductButton = (ImageButton)v.findViewById(R.id.add_product_button);
         mAddProductButton.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +72,7 @@ public class ProductDecisionFragment extends Fragment {
     }
 
     private void addNewProduct() {
+        mLogo.setVisibility(View.GONE);
         final LinearLayout productLayout = new LinearLayout(getContext());
         productLayout.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
