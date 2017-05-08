@@ -1,18 +1,15 @@
 package csci448.appigators.snappydecisions;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 
 public class ProductWebsitesActivity extends AppCompatActivity {
     private static final String PRODUCT_NAME_KEY = "product_name";
+    private static final String NEW_PRODUCTS_KEY = "new_products";
+    private static final int REQUEST_CODE = 0;
 
     private enum Website {AMAZON, NEWEGG, EBAY}
 
@@ -103,8 +102,8 @@ public class ProductWebsitesActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 Uri uri = getUri(website);
-                Intent intent = ProductInfoActivity.newIntent(getApplicationContext(), uri);
-                startActivity(intent);
+                Intent intent = ProductWebViewActivity.newIntent(getApplicationContext(), uri);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -140,5 +139,24 @@ public class ProductWebsitesActivity extends AppCompatActivity {
         }
 
         return uri;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE) {
+            if (data == null) {
+                return;
+            }
+            setResultData(data.getStringArrayExtra(NEW_PRODUCTS_KEY));
+        }
+    }
+
+    private void setResultData(String[] newProducts) {
+        Intent data = new Intent();
+        data.putExtra(NEW_PRODUCTS_KEY, newProducts);
+        setResult(RESULT_OK, data);
     }
 }

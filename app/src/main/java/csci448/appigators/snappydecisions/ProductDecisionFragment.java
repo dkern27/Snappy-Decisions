@@ -1,5 +1,6 @@
 package csci448.appigators.snappydecisions;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -24,15 +25,17 @@ import java.util.ArrayList;
 
 public class ProductDecisionFragment extends Fragment {
 
+    private static final String NEW_PRODUCTS_KEY = "new_products";
+    private static final int REQUEST_CODE = 0;
+
     private ImageButton mAddProductButton;
     private EditText mAddProductText;
+    private String mProductName;
     private LinearLayout mProductList;
-    private Uri mUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -52,6 +55,7 @@ public class ProductDecisionFragment extends Fragment {
             {
                 // only update if user has put text
                 if (!mAddProductText.getText().toString().equals("")) {
+                    mProductName = mAddProductText.getText().toString();
                     addNewProduct();
                     clearNewFields();
                 } else {
@@ -88,7 +92,7 @@ public class ProductDecisionFragment extends Fragment {
 
         productLayout.addView(removeButton);
 
-        final String productName = mAddProductText.getText().toString();
+        final String productName = mProductName;
         EditText textView = new EditText(getContext());
         textView.setText(productName);
         textView.setKeyListener(null);
@@ -101,7 +105,7 @@ public class ProductDecisionFragment extends Fragment {
             public void onClick(View v)
             {
                 Intent intent = ProductWebsitesActivity.newIntent(getContext(), productName);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -109,6 +113,23 @@ public class ProductDecisionFragment extends Fragment {
         productLayout.addView(imageButton, params);
 
         mProductList.addView(productLayout);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE) {
+            if (data == null) {
+                return;
+            }
+            String[] newProducts = data.getStringArrayExtra(NEW_PRODUCTS_KEY);
+            for (String s : newProducts) {
+                mProductName = s;
+                addNewProduct();
+            }
+        }
     }
 
     private void clearNewFields() {

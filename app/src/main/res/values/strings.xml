@@ -47,5 +47,6 @@
 		The websites are Amazon, Newegg, and eBay. You can compare results from the various sites by navigating to each of them in turn.\n
 		Once on the website, hitting the back button will move back through your browsing history. Hitting the up button in the upper left corner of the screen will take you back to the website selection screen.
 	</string>
+	<string name="add_product">Add Product</string>
 
 </resources>

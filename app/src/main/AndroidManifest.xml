@@ -35,7 +35,7 @@
 			android:parentActivityName=".BaseActivity"
 			android:screenOrientation="portrait" />
 		<activity
-			android:name=".ProductInfoActivity"
+			android:name=".ProductWebViewActivity"
 			android:configChanges="orientation"
 			android:label="@string/product_decision"
 			android:parentActivityName=".BaseActivity"
@@ -44,7 +44,7 @@
 			android:name=".ProductWebsitesActivity"
 			android:configChanges="orientation"
 			android:label="@string/product_decision"
-			android:parentActivityName=".ProductInfoActivity"
+			android:parentActivityName=".ProductWebViewActivity"
 			android:screenOrientation="portrait" />
 
 		<meta-data
