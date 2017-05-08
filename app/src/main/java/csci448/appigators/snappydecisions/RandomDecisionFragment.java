@@ -33,6 +33,7 @@ import java.util.Random;
 
 import csci448.appigators.snappydecisions.database.SnappyDecisionsBaseHelper;
 import csci448.appigators.snappydecisions.database.SnappyDecisionsCursorWrapper;
+import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema;
 import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomDecisionOptionTable;
 import csci448.appigators.snappydecisions.database.SnappyDecisionsSchema.RandomDecisionTable;
 
@@ -215,8 +216,23 @@ public class RandomDecisionFragment extends Fragment
             @Override
             public boolean onMenuItemClick(MenuItem item)
             {
-                String name = item.getTitle().toString();
-                loadOptions(name);
+                final String name = item.getTitle().toString();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Load or Delete Entry?");
+
+                builder.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        loadOptions(name);
+                    }
+                });
+                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteOptions(name);
+                    }
+                });
+                builder.show();
                 return true;
             }
         });
@@ -546,6 +562,12 @@ public class RandomDecisionFragment extends Fragment
         {
             cursor.close();
         }
+    }
+
+    private void deleteOptions(String name)
+    {
+        mDatabase.delete(SnappyDecisionsSchema.RandomDecisionOptionTable.NAME, RandomDecisionOptionTable.Cols.DECISION + " = ?", new String[]{name});
+        mDatabase.delete(SnappyDecisionsSchema.RandomDecisionTable.NAME, RandomDecisionTable.Cols.NAME + " = ?", new String[]{name});
     }
 
     //endregion
