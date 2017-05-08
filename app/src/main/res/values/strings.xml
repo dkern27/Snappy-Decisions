@@ -57,9 +57,10 @@
 	<string name="help_product_text">
 		Enter the name of a product or general item you want to search for.\n
 		Once the product has been entered, clicking the arrow next to it will open a screen that allows you to choose which website\'s results to look at.\n
+		Clicking the Save button will save your list of products to the Random Decision Maker so you can have one selected for you if you still can\'t decide.\n
 		The websites are Amazon, Newegg, and eBay. You can compare results from the various sites by navigating to each of them in turn.\n
 		Once on the website, hitting the back button will move back through your browsing history. Hitting the up button in the upper left corner of the screen will take you back to the website selection screen.\n
-		Hitting the \'+\' button on the menu while browsing the websites allows you to add a product to your list of products so you can narrow down your search as you go.
+		Hitting the \'+\' button on the menu while browsing the websites allows you to add a product to your list of products so you can narrow down your search as you go.\n
 	</string>
 	<string name="add_product">Add Product</string>
 	<string name="help_food_text">
