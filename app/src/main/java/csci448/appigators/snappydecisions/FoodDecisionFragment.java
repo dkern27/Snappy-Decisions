@@ -518,6 +518,7 @@ public class FoodDecisionFragment extends Fragment
     private void pickBusiness( ArrayList<Business> businesses ) {
         if (businesses.size() > 0)
         {
+            Collections.shuffle(businesses);
             Random rand = new Random();
             int choice = rand.nextInt(businesses.size());
             mDecisionText.setText(businesses.get(choice).getName());
