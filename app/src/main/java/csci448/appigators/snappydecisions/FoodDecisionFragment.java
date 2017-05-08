@@ -383,13 +383,11 @@ public class FoodDecisionFragment extends Fragment
         params.put("latitude", Double.toString(mCurrentLocation.getLatitude()));
         params.put("longitude", Double.toString(mCurrentLocation.getLongitude()));
 
-        //adding food type filters
+        //adding category filters
         ArrayList<String> stringsToAdd = new ArrayList<>();
         String categoriesString = "";
-        if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1) {
-            stringsToAdd.add("mexican");
-            stringsToAdd.add("newmexican");
-        }
+
+        //nationality categories
         if (mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()) == 1) {
             stringsToAdd.add("newamerican");
             stringsToAdd.add("tradamerican");
@@ -397,6 +395,42 @@ public class FoodDecisionFragment extends Fragment
         if (mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()) == 1) {
             stringsToAdd.add("panasian");
             stringsToAdd.add("asianfusion");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.GREEK.ordinal()) == 1) {
+            stringsToAdd.add("greek");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.INDIAN.ordinal()) == 1) {
+            stringsToAdd.add("indpak");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.ITALIAN.ordinal()) == 1) {
+            stringsToAdd.add("italian");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()) == 1) {
+            stringsToAdd.add("mexican");
+            stringsToAdd.add("newmexican");
+        }
+
+        //food type categories
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.BBQ.ordinal()) == 1) {
+            stringsToAdd.add("bbq");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.BREAKFAST.ordinal()) == 1) {
+            stringsToAdd.add("breakfast_brunch");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.BURGERS.ordinal()) == 1) {
+            stringsToAdd.add("burgers");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.CHICKEN_WINGS.ordinal()) == 1) {
+            stringsToAdd.add("chicken_wings");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.SANDWICHES.ordinal()) == 1) {
+            stringsToAdd.add("sandwiches");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.STEAK.ordinal()) == 1) {
+            stringsToAdd.add("steak");
+        }
+        if (mFiltersArray.get(FoodFiltersActivity.Filter.SUSHI.ordinal()) == 1) {
+            stringsToAdd.add("sushi");
         }
 
         for (int i = 0; i < stringsToAdd.size(); i++) {
@@ -657,9 +691,25 @@ public class FoodDecisionFragment extends Fragment
         ContentValues values = new ContentValues();
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME, name);
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.RADIUS, mRadius);
+
+        //nationality filters
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.AMERICAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.AMERICAN.ordinal()));
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.ASIAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.ASIAN.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.GREEK_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.GREEK.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.INDIAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.INDIAN.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.ITALIAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.ITALIAN.ordinal()));
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.MEXICAN_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.MEXICAN.ordinal()));
+
+        //food type filters
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.BBQ_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.BBQ.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.BREAKFAST_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.BREAKFAST.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.BURGER_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.BURGERS.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.CHICKEN_WINGS_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.CHICKEN_WINGS.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.SANDWICHES_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.SANDWICHES.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.STEAK_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.STEAK.ordinal()));
+        values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.SUSHI_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.SUSHI.ordinal()));
+
+        //pricing filters
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$.ordinal()));
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$$.ordinal()));
         values.put(SnappyDecisionsSchema.FoodDecisionTable.Cols.$$$_FILTER, mFiltersArray.get(FoodFiltersActivity.Filter.$$$.ordinal()));

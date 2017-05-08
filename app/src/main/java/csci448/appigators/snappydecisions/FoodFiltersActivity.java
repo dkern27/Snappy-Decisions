@@ -18,11 +18,44 @@ import java.util.Collections;
 
 public class FoodFiltersActivity extends AppCompatActivity
 {
-    public enum Filter{AMERICAN, ASIAN, MEXICAN, $, $$, $$$, $$$$}
+    public enum Filter{
+        AMERICAN,
+        ASIAN,
+        GREEK,
+        INDIAN,
+        ITALIAN,
+        MEXICAN,
+        BBQ,
+        BREAKFAST,
+        BURGERS,
+        CHICKEN_WINGS,
+        SANDWICHES,
+        STEAK,
+        SUSHI,
+        $,
+        $$,
+        $$$,
+        $$$$
+    }
 
+    //nationality check boxes
     CheckBox mAmericanFilter;
     CheckBox mAsianFilter;
+    CheckBox mGreekFilter;
+    CheckBox mIndianFilter;
+    CheckBox mItalianFilter;
     CheckBox mMexicanFilter;
+
+    //food type check boxes
+    CheckBox mSandwichesFilter;
+    CheckBox mBbqFilter;
+    CheckBox mBurgersFilter;
+    CheckBox mBreakfastFilter;
+    CheckBox mChickenWingsFilter;
+    CheckBox mSushiFilter;
+    CheckBox mSteakFilter;
+
+    //pricing check boxes
     CheckBox m$Filter;
     CheckBox m$$Filter;
     CheckBox m$$$Filter;
@@ -55,15 +88,48 @@ public class FoodFiltersActivity extends AppCompatActivity
         Intent savedDataIntent = getIntent();
         mFiltersArray = savedDataIntent.getIntegerArrayListExtra(FILTERS_KEY);
 
+        //nationality checkboxes
         mAmericanFilter = (CheckBox) findViewById(R.id.american_filter);
         mAmericanFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.AMERICAN.ordinal())));
 
         mAsianFilter = (CheckBox) findViewById(R.id.asian_filter);
         mAsianFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.ASIAN.ordinal())));
 
+        mGreekFilter = (CheckBox) findViewById(R.id.greek_filter);
+        mGreekFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.GREEK.ordinal())));
+
+        mIndianFilter = (CheckBox) findViewById(R.id.indian_filter);
+        mIndianFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.INDIAN.ordinal())));
+
+        mItalianFilter = (CheckBox) findViewById(R.id.italian_filter);
+        mItalianFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.ITALIAN.ordinal())));
+
         mMexicanFilter = (CheckBox) findViewById(R.id.mexican_filter);
         mMexicanFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.MEXICAN.ordinal())));
 
+        //type of food checkboxes
+        mBbqFilter = (CheckBox) findViewById(R.id.bbq_filter);
+        mBbqFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.BBQ.ordinal())));
+
+        mBreakfastFilter = (CheckBox) findViewById(R.id.breakfast_filter);
+        mBreakfastFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.BREAKFAST.ordinal())));
+
+        mBurgersFilter = (CheckBox) findViewById(R.id.burger_filter);
+        mBurgersFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.BURGERS.ordinal())));
+
+        mChickenWingsFilter = (CheckBox) findViewById(R.id.chicken_wings_filter);
+        mChickenWingsFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.CHICKEN_WINGS.ordinal())));
+
+        mSandwichesFilter = (CheckBox) findViewById(R.id.sandwiches_filter);
+        mSandwichesFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.SANDWICHES.ordinal())));
+
+        mSteakFilter = (CheckBox) findViewById(R.id.steak_filter);
+        mSteakFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.STEAK.ordinal())));
+
+        mSushiFilter = (CheckBox) findViewById(R.id.sushi_filter);
+        mSushiFilter.setChecked(integerToBoolean(mFiltersArray.get(Filter.SUSHI.ordinal())));
+
+        //pricing checkboxes
         m$Filter = (CheckBox) findViewById(R.id.low_filter);
         m$Filter.setChecked(integerToBoolean(mFiltersArray.get(Filter.$.ordinal())));
 
@@ -78,21 +144,12 @@ public class FoodFiltersActivity extends AppCompatActivity
 
         //for sending result back
 
-
+        //nationality listeners
         mAmericanFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 mFiltersArray.set(Filter.AMERICAN.ordinal(), booleanToInteger(mAmericanFilter.isChecked()));
-                setReturningIntent();
-            }
-        });
-
-        mMexicanFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                mFiltersArray.set(Filter.MEXICAN.ordinal(), booleanToInteger(mMexicanFilter.isChecked()));
                 setReturningIntent();
             }
         });
@@ -106,6 +163,107 @@ public class FoodFiltersActivity extends AppCompatActivity
             }
         });
 
+        mGreekFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.GREEK.ordinal(), booleanToInteger(mGreekFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mIndianFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.INDIAN.ordinal(), booleanToInteger(mIndianFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mItalianFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.ITALIAN.ordinal(), booleanToInteger(mItalianFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mMexicanFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.MEXICAN.ordinal(), booleanToInteger(mMexicanFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        //type of food listeners
+        mBbqFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.BBQ.ordinal(), booleanToInteger(mBbqFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mBreakfastFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.BREAKFAST.ordinal(), booleanToInteger(mBreakfastFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mBurgersFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.BURGERS.ordinal(), booleanToInteger(mBurgersFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mChickenWingsFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.CHICKEN_WINGS.ordinal(), booleanToInteger(mChickenWingsFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mSandwichesFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.SANDWICHES.ordinal(), booleanToInteger(mSandwichesFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mSteakFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.STEAK.ordinal(), booleanToInteger(mSteakFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        mSushiFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                mFiltersArray.set(Filter.SUSHI.ordinal(), booleanToInteger(mSushiFilter.isChecked()));
+                setReturningIntent();
+            }
+        });
+
+        //pricing listeners
         m$Filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)

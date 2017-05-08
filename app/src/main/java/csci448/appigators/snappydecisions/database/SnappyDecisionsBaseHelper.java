@@ -45,7 +45,17 @@ public class SnappyDecisionsBaseHelper extends SQLiteOpenHelper
                 FoodDecisionTable.Cols.RADIUS +  ", " +
                 FoodDecisionTable.Cols.AMERICAN_FILTER +  ", " +
                 FoodDecisionTable.Cols.ASIAN_FILTER +  ", " +
+                FoodDecisionTable.Cols.GREEK_FILTER +  ", " +
+                FoodDecisionTable.Cols.INDIAN_FILTER +  ", " +
+                FoodDecisionTable.Cols.ITALIAN_FILTER +  ", " +
                 FoodDecisionTable.Cols.MEXICAN_FILTER +  ", " +
+                FoodDecisionTable.Cols.BBQ_FILTER +  ", " +
+                FoodDecisionTable.Cols.BREAKFAST_FILTER +  ", " +
+                FoodDecisionTable.Cols.BURGER_FILTER +  ", " +
+                FoodDecisionTable.Cols.CHICKEN_WINGS_FILTER +  ", " +
+                FoodDecisionTable.Cols.SANDWICHES_FILTER +  ", " +
+                FoodDecisionTable.Cols.STEAK_FILTER +  ", " +
+                FoodDecisionTable.Cols.SUSHI_FILTER +  ", " +
                 FoodDecisionTable.Cols.$_FILTER +  ", " +
                 FoodDecisionTable.Cols.$$_FILTER +  ", " +
                 FoodDecisionTable.Cols.$$$_FILTER +  ", " +

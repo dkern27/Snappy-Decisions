@@ -60,7 +60,7 @@
 			android:layout_weight="0.13">
 
 			<Button
-				android:text="@string/load_delete"
+				android:text="@string/load"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentTop="true"
