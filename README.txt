@@ -37,22 +37,13 @@ Data not saved when moving between decision activities.
 		Currently saving/loading filter options is not functional, and filters are lost when going back to the main menu.
 			
 	Product Decision:
-		 The user can type the name of a product they wish to see into the text field. This will add the product to a list of 
-		 various products, each with a button next to it. Clicking the button will take the user to an amazon page with that 
-		 product as a search term.
+		 
+		 The user can add products to a list of products. Within the list, there is a button next to each product that leads to a website selection screen. At this screen, the user
+		 can choose which website they want to saerch for the product in (one of Amazon, Newegg, and eBay). Clicking the buttons for each website will open that site in a WebView.
+		 Within the WebView, the user can add more products to their list as they see them appear on the websites, allowing them to narrow down a search as they go.
 
-		Originally this was going to use an Amazon API to get information about the product and then display a list of products 
-		matching the search term so the user can compare them, but the API that we wanted to use is not available anymore so 
-		this is a fix until a different API can be found and implemented.
-		
-		Currently Product information doesn't save when you go back to the menu
+		 At the main product list screen, the user can send the list to the Random Decision screen by saving it and then loading it in the Random Decision screen. This allows the user
+		 to have the app choose a product for them if they still can't pick one after getting the available information for each of them.
 
 Known Bugs
 	None
-
-Areas we would like feedback on:
-	Layout advice for random decision. We think space below buttons looks odd, add a rectangle outline for where decision output is?
-	
-	Layout advice for food decision. Would a small map view at the bottom be helpful? Please try to break the filters!
-
-	We are thinking of getting rid of the main menu and using a hamburger naivgation drawer instead.
