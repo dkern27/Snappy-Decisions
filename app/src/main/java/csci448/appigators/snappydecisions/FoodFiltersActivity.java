@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 
 import java.util.ArrayList;
@@ -65,20 +64,37 @@ public class FoodFiltersActivity extends AppCompatActivity
     private final static String FILTERS_KEY = "FILTERS_KEY";
     private ArrayList<Integer> mFiltersArray = new ArrayList<Integer>(Collections.nCopies(NUM_FILTERS, 0));
 
+    /**
+     * Converts integer to boolean
+     * @param x integert oconvert
+     * @return true or false
+     */
     private boolean integerToBoolean(int x){
         return x > 0 ? true: false;
     }
 
+    /**
+     * Converts boolean to integer
+     * @param b boolean to convert
+     * @return 1 or 0
+     */
     private int booleanToInteger(boolean b){
         return b ? 1 : 0;
     }
 
+    /**
+     * Makes return intent with filter results
+     */
     private void setReturningIntent(){
         final Intent returnIntent = new Intent();
         returnIntent.putIntegerArrayListExtra(FILTERS_KEY, mFiltersArray);
         setResult(Activity.RESULT_OK, returnIntent);
     }
 
+    /**
+     * Creates view, hooks up listeners
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

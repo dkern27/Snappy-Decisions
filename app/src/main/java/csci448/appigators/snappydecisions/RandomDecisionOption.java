@@ -9,12 +9,20 @@ public class RandomDecisionOption
     private String mOption;
     private int mWeight;
 
+    /**
+     * Default constructor
+     */
     public RandomDecisionOption()
     {
         this.mOption = "";
         this.mWeight = 0;
     }
 
+    /**
+     * Non-default constructor
+     * @param option
+     * @param weight
+     */
     public RandomDecisionOption(String option, int weight)
     {
         this.mOption = option;

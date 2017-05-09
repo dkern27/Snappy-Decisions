@@ -72,6 +72,13 @@ public class RandomDecisionFragment extends Fragment
         mDatabase = new SnappyDecisionsBaseHelper(context).getWritableDatabase();
     }
 
+    /**
+     * Creates visible components and hooks up listeners
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -409,12 +416,18 @@ public class RandomDecisionFragment extends Fragment
 
     //region Helper functions
 
+    /**
+     * Opens toast to inform user that an option cannot be blank
+     */
     private void showEmptyTextToast()
     {
         Toast.makeText(getActivity(), "Option cannot be blank", Toast.LENGTH_SHORT).show();
-
     }
 
+    /**
+     * Sets whether weights are visible or not depending on checkbox
+     * @param isChecked
+     */
     private void changeWeightVisibility(boolean isChecked)
     {
         mNewDecisionWeightText.setEnabled(isChecked);
@@ -567,6 +580,10 @@ public class RandomDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Deletes decision from database
+     * @param name
+     */
     private void deleteOptions(String name)
     {
         mDatabase.delete(SnappyDecisionsSchema.RandomDecisionOptionTable.NAME, RandomDecisionOptionTable.Cols.DECISION + " = ?", new String[]{name});

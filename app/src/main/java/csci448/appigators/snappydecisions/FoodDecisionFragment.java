@@ -13,14 +13,12 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +84,11 @@ public class FoodDecisionFragment extends Fragment
     private SQLiteDatabase mDatabase;
 
     //region Overridden methods
+
+    /**
+     * Creates fragment, connects to play services and yelp
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +119,13 @@ public class FoodDecisionFragment extends Fragment
         new ConnectTask().execute(0);
     }
 
+    /**
+     * Creates view, hooks up listeners
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -232,6 +242,12 @@ public class FoodDecisionFragment extends Fragment
         super.onStop();
     }
 
+    /**
+     * Gets result from filters activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 0 && resultCode == RESULT_OK)
@@ -242,6 +258,9 @@ public class FoodDecisionFragment extends Fragment
 
     //endregion
 
+    /**
+     * Checks for location permission
+     */
     public void checkPermission(){
         Log.d(TAG, "checkPermission()");
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -253,6 +272,9 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Resets radius and filters to default
+     */
     public void resetRadiusAndFilters(){
         for(int i = 0; i < mFiltersArray.size(); i++){
             mFiltersArray.set(i,0);
@@ -263,6 +285,9 @@ public class FoodDecisionFragment extends Fragment
 
     //region Save/Load
 
+    /**
+     * Saves decision to database with unique name
+     */
     private void showSaveDialogue(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Save Current Distance and Filters As");
@@ -300,6 +325,10 @@ public class FoodDecisionFragment extends Fragment
         builder.show();
     }
 
+    /**
+     * Loads decision from database
+     * @param v view to open window on
+     */
     private void showLoadDialogue(View v)
     {
         PopupMenu loadMenu = new PopupMenu(getContext(), v);
@@ -349,6 +378,9 @@ public class FoodDecisionFragment extends Fragment
 
     //region Yelp API
 
+    /**
+     * Connects to yelp
+     */
     void connectToYelp(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -365,8 +397,10 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Starts yelp search
+     */
     private void initiateSearch() {
-        //mLogo.setVisibility(View.GONE);
         mDecisionText.setText(R.string.Loading);
         mChoicesText.setText("");
         addressPlusName = "";
@@ -374,6 +408,10 @@ public class FoodDecisionFragment extends Fragment
         new SearchTask().execute(0);
     }
 
+    /**
+     * Searches yelp with filters
+     * @return list of businesses
+     */
     private ArrayList<Business> searchYelp(){
         ArrayList<Business> businesses = new ArrayList<>();
         Map<String, String> params = new HashMap<>();
@@ -515,6 +553,10 @@ public class FoodDecisionFragment extends Fragment
         return businesses;
     }
 
+    /**
+     * Picks a business from the list returned by yelp
+     * @param businesses list of businesses from yelp
+     */
     private void pickBusiness( ArrayList<Business> businesses ) {
         if (businesses.size() > 0)
         {
@@ -538,6 +580,10 @@ public class FoodDecisionFragment extends Fragment
     //endregion
 
     //region Maps/Location
+
+    /**
+     * Opens restaurant choice in maps
+     */
     private void openInMaps(){
         if (!addressPlusName.equals(""))
         {
@@ -551,6 +597,9 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Gets location of user from play services
+     */
     private void getCurrentLocation()
     {
         LocationRequest request = LocationRequest.create();
@@ -576,6 +625,9 @@ public class FoodDecisionFragment extends Fragment
 
     //endregion
 
+    /**
+     * Opens yelp page of restaurant
+     */
     private void openWebsite(){
         if (!websiteUrl.equals("")) {
             String url = websiteUrl;
@@ -588,6 +640,9 @@ public class FoodDecisionFragment extends Fragment
 
     //region AsyncTasks
 
+    /**
+     * Asynctask to search yelp
+     */
     private class SearchTask extends AsyncTask<Integer,Void,Void> {
 
         ArrayList<Business> businesses;
@@ -604,6 +659,9 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Asnctask to connect to yelp
+     */
     private class ConnectTask extends AsyncTask<Integer,Void,Void> {
 
         @Override
@@ -735,9 +793,6 @@ public class FoodDecisionFragment extends Fragment
     private void loadOptions(String name)
     {
         SnappyDecisionsCursorWrapper cursor = queryTable(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
-        //clear stuff
-        //set logo back
-        //mLogo.setVisibility(View.VISIBLE);
         try
         {
             cursor.moveToFirst();
@@ -755,6 +810,10 @@ public class FoodDecisionFragment extends Fragment
         }
     }
 
+    /**
+     * Deletes decision from database
+     * @param name
+     */
     private void deleteOptions(String name){
         mDatabase.delete(SnappyDecisionsSchema.FoodDecisionTable.NAME, SnappyDecisionsSchema.FoodDecisionTable.Cols.NAME + " = ?", new String[]{name});
     }
