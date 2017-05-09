@@ -50,7 +50,7 @@
 	</ScrollView>
 
 	<Button
-		android:text="@string/random_decision"
+		android:text="@string/send_to_random_decision"
 		android:id="@+id/save_button"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

@@ -45,6 +45,7 @@
 	<string name="title_random">Random</string>
 	<string name="title_food">Food</string>
 	<string name="title_product">Product</string>
+	<string name="send_to_random_decision">Send to Random Decision</string>
 	<string name="help">Help</string>
 	<string name="help_random_text">
 		Enter the decision in the provided text field.\n
