@@ -28,7 +28,7 @@
 		android:hint="@string/enter_product_hint"
 		android:layout_alignParentTop="true"
 		android:layout_toEndOf="@id/add_product_button"
-		android:layout_alignBottom="@id/add_product_button" />
+		android:layout_alignBottom="@id/add_product_button"/>
 
 	<ScrollView
 			android:layout_width="match_parent"
@@ -36,7 +36,9 @@
 			android:id="@+id/product_list_view"
 			android:layout_below="@id/new_product_text"
 			android:layout_above="@id/save_button"
-			android:layout_alignParentStart="true">
+			android:layout_alignParentStart="true"
+			android:paddingTop="50dp">
+
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"

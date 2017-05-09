@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +54,8 @@ public class ProductDecisionFragment extends Fragment {
     private List<String> mProducts = new ArrayList<>();
     private List<RandomDecisionOption> mOptions = new ArrayList<>();
     private SQLiteDatabase mDatabase;
-
+    private ScrollView mScrollView;
+    private int mLogoPaddingTop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,8 @@ public class ProductDecisionFragment extends Fragment {
         mAddProductText = (EditText)v.findViewById(R.id.new_product_text);
         mProductList = (LinearLayout)v.findViewById(R.id.product_list_linear_layout);
         mLogo = (ImageView)v.findViewById(R.id.logo);
+        mScrollView = (ScrollView)v.findViewById(R.id.product_list_view);
+        mLogoPaddingTop = mScrollView.getPaddingTop();
 
         mAddProductButton = (ImageButton)v.findViewById(R.id.add_product_button);
         mAddProductButton.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +109,7 @@ public class ProductDecisionFragment extends Fragment {
 
     private void addNewProduct() {
         mLogo.setVisibility(View.GONE);
+        mScrollView.setPadding(0, 0, 0, 0);
         final LinearLayout productLayout = new LinearLayout(getContext());
         productLayout.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -130,6 +135,7 @@ public class ProductDecisionFragment extends Fragment {
                 mProducts.remove(productName);
                 if (mProducts.isEmpty()) {
                     mLogo.setVisibility(View.VISIBLE);
+                    mScrollView.setPaddingRelative(0, mLogoPaddingTop, 0, 0);
                 }
             }
         });
